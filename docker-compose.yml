@@ -1,0 +1,14 @@
+version: '3'
+services:
+  front:
+    build: ./front                # Dockerfileの相対パス
+    container_name: node          # コンテナ名
+    volumes:                      # コンテナと共有するフォルダの設定（ホストディレクトリの相対パス:コンテナディレクトリの相対パス）と書く
+      - ./front:/front            # frontディレクトリをコンテナ内と同期する
+    working_dir: /front           # コンテナ内に入った際のディレクトリ
+    ports:                        # ポートの設定（ホストのポート:コンテナのポート）
+      - 3000:3000                 # コンテナの3000番をホストの3000番に対応させることで，localhost:3000でReactサーバにアクセスできる
+    tty: true                     # コンテナ内でのコマンド実行時にコマンドライン画面を使用可能にする
+    stdin_open: true              # 標準入出力とエラー出力をコンテナに結びつける設定
+    environment:
+      - CHOKIDAR_USEPOLLING=true  # 変更後リロードを行う設定
