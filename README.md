@@ -68,7 +68,7 @@
 
       export default reportWebVitals;
       ```
-17. 「app/react-app-env.d.ts」を次の内容で上書きする
+17. 「src/app/react-app-env.d.ts」を次の内容で上書きする
       ```
       import "react-scripts/lib/react-app.d.ts";
       ```
