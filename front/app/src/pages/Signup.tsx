@@ -10,7 +10,7 @@ const Signup = (): JSX.Element => {
     <>
       <Container>
         <Form>
-          <Form.Group>
+          <Form.Group controlId="emailAddress">
             <Form.Label>Email address</Form.Label>
             <Form.Control
               type="email"
@@ -21,7 +21,7 @@ const Signup = (): JSX.Element => {
               }}
             />
           </Form.Group>
-          <Form.Group>
+          <Form.Group controlId="passWord">
             <Form.Label class="mt-3">Password</Form.Label>
             <Form.Control
               type="password"
