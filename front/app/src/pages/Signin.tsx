@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import { Button } from "react-bootstrap";
@@ -34,10 +33,10 @@ const Signin = (): JSX.Element => {
             />
           </Form.Group>
         </Form>
-        <Button className="mt-3" variant="primary" size="lg" href="/Signin">
+        <Button className="mt-3" variant="primary" size="lg">
           Sign in
         </Button>{" "}
-        <Button className="mt-3" variant="secondary" size="lg" href="Signup">
+        <Button className="mt-3" variant="secondary" size="lg" href="/Signup">
           Sign up
         </Button>
       </Container>
