@@ -5,7 +5,7 @@ const Signup = (): JSX.Element => {
   return (
     <div>
       <Container>
-        <p></p>
+        <p>20230808</p>
       </Container>
     </div>
   );
