@@ -7,7 +7,7 @@ const Home = (): JSX.Element => {
     <div>
       <Header />
       <Container>
-        <p></p>
+        <p>a</p>
       </Container>
     </div>
   );
