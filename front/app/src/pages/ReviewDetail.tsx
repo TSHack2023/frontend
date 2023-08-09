@@ -1,8 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Container from "react-bootstrap/Container";
 import Header from "../components/header";
-import { Button, Form, ListGroup } from "react-bootstrap";
-import RangeSlider from "react-bootstrap-range-slider";
+import { Button } from "react-bootstrap";
 import ReviewItem from "../components/ReviewItem";
 
 interface Eval {
@@ -14,8 +13,8 @@ interface Eval {
 }
 
 const ReviewDetail = (): JSX.Element => {
-  const [filename, setFilename] = useState<string>("File Name");
-  const [fileurl, setFileurl] = useState<string>("https://example");
+  const [filename, setFilename] = useState<string>("");
+  const [fileurl, setFileurl] = useState<string>("");
   const [evallist, setEvallist] = useState<Eval[]>([]);
 
   useEffect(() => {
@@ -23,6 +22,8 @@ const ReviewDetail = (): JSX.Element => {
   }, []);
 
   const getDetailAPI = (): void => {
+    const testFilename = "file name";
+    const testFileurl = "https://example";
     const testEval1: Eval = {
       id: 0,
       name: "name",
@@ -38,6 +39,8 @@ const ReviewDetail = (): JSX.Element => {
       explanation: "discription",
     };
     const testEvallist: Eval[] = [testEval1, testEval2];
+    setFilename(testFilename);
+    setFileurl(testFileurl);
     setEvallist(testEvallist);
   };
 

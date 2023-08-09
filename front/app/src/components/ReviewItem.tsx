@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, ListGroup } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import RangeSlider from "react-bootstrap-range-slider";
 import Container from "react-bootstrap/Container";
 
