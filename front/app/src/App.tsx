@@ -20,7 +20,7 @@ const App = (): JSX.Element => {
           <Route path="/Signup">
             <Signup />
           </Route>
-          <Route path="/Home/">
+          <Route path="/Home/detail">
             <HomeDetail />
           </Route>
           <Route path="/Home">
@@ -29,7 +29,7 @@ const App = (): JSX.Element => {
           <Route path="/Contribute">
             <Contribute />
           </Route>
-          <Route path="/Review/">
+          <Route path="/Review/a">
             <ReviewDetail />
           </Route>
           <Route path="/Review">
