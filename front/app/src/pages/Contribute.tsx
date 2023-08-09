@@ -13,10 +13,10 @@ type Item = {
 const Contribute = (): JSX.Element => {
   const [filename, setFilename] = useState("");
   const [list, setList] = useState([
-    {id: 0, item: <EvalItem />}
+    {id: 0, item: <EvalItem id={0}/>}
   ]);
   const addItem = () => {
-    setList([...list, {id: list.length, item: <EvalItem />}]);
+    setList([...list, {id: list.length, item: <EvalItem id={list.length}/>}]);
     console.log(list);
   };
   const list2 = list.map(list => list.item);
@@ -61,9 +61,6 @@ const Contribute = (): JSX.Element => {
         <div className="mt-3">
           <Button variant="primary" size="lg" onClick={addItem}>
             項目を追加
-          </Button>{" "}
-          <Button variant="danger" size="lg">
-            項目を削除
           </Button>{" "}
         </div>
         <div className="mt-3">

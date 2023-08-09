@@ -1,15 +1,12 @@
 import React, { useState } from "react";
-import { Form, Col, Row } from "react-bootstrap";
+import { Button, Form, Col, Row } from "react-bootstrap";
 
-interface Item {
-    evalid: number,
-    evalname: string,
-    evalmax: number,
-    evalmin: number,
-    explanation: string,
+interface Props {
+    id: number;
 }
 
-const EvalItem: React.FC = () => {
+const EvalItem = (props: Props): JSX.Element => {
+    const item_id = props.id;
     const [evalname, setEvalName] = useState("");
     const [evalmax, setEvalmax] = useState<number>(0);
     const [evalmin, setEvalmin] = useState<number>(0);
@@ -77,6 +74,9 @@ const EvalItem: React.FC = () => {
                 }}
                 />
             </Col>
+            <Button variant="danger" size="sm">
+                項目を削除
+            </Button>{" "}
             </Form.Group>
         </Form>
         </>
