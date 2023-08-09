@@ -11,6 +11,7 @@ const blobServiceClient = new BlobServiceClient(
 const containerName = process.env.REACT_APP_AZURE_CONTAINER_NAME ?? "container";
 
 const uploadFile2AzureStorage = async (file: File): Promise<string> => {
+  console.log(account);
   const containerClient = blobServiceClient.getContainerClient(containerName);
 
   const content = file;
