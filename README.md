@@ -94,15 +94,15 @@
 1. `docker exec -it node /bin/bash`
 2. `cd app`
 3. `npm install react-bootstrap bootstrap@4.6.0`
-4. 「src/index.js」に　`import "bootstrap/dist/css/bootstrap.min.css";`　を追加
+4. 「src/index.tsx」に　`import "bootstrap/dist/css/bootstrap.min.css";`　を追加
 5. 必要なコンポーネントをインポート（例：`import Button from "react-bootstrap/Button";`）
 
 ## react-router-domの導入
 1. `docker exec -it node /bin/bash`
 2. `cd app`
-2. `npm install react-router-dom@5 @types/react-router-dom`
+3. `npm install react-router-dom@5 @types/react-router-dom`
 
 ## axiosの導入
 1. `docker exec -it node /bin/bash`
 2. `cd app`
-2. `npm install axios`
+3. `npm install axios`
