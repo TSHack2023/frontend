@@ -1,32 +1,43 @@
+import React, { useState } from "react";
 import Container from "react-bootstrap/Container";
 import Header from "../components/header";
-import React, { useState } from "react";
-import Form from "react-bootstrap/Form";
-import { Button, Col, Row } from "react-bootstrap";
+import { Button, Col, Form, Row } from "react-bootstrap";
 import EvalItem from "../components/EvalItem";
 
-type Item = {
-  id: number,
-  item: React.FC<{}>
-}
-
 const Contribute = (): JSX.Element => {
-  const [filename, setFilename] = useState("");
-  const [list, setList] = useState([
-    {id: 0, item: <EvalItem id={0}/>}
-  ]);
-  const addItem = () => {
-    setList([...list, {id: list.length, item: <EvalItem id={list.length}/>}]);
-    console.log(list);
+  const [filename, setFilename] = useState<string>("");
+  const [list, setList] = useState<number[]>([]);
+
+  const randomInt = (min: number, max: number): number => {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min) + min);
   };
-  const list2 = list.map(list => list.item);
+
+  const addItem = (): void => {
+    while (true) {
+      const rand = randomInt(0, 100);
+      if (!list.includes(rand)) {
+        setList([...list, rand]);
+        break;
+      }
+    }
+  };
+
+  const deleteItem = (id: number): void => {
+    const newList = list.filter((item) => item !== id);
+    setList(newList);
+  };
+
+  const listRender = list.map((item) => {
+    return <EvalItem key={item} id={item} func={deleteItem} />;
+  });
 
   return (
     <>
       <Header />
       <Container>
         <Form>
-          {/* ファイル名 */}
           <Form.Group as={Row} className="mt-5" controlId="fileName">
             <Form.Label column sm="1">
               名前
@@ -43,7 +54,6 @@ const Contribute = (): JSX.Element => {
             </Col>
           </Form.Group>
 
-          {/* ファイル選択 */}
           <Form.Group as={Row} className="mt-3" controlId="fileUpload">
             <Form.Label column sm="1">
               ファイル
@@ -54,10 +64,8 @@ const Contribute = (): JSX.Element => {
           </Form.Group>
         </Form>
 
-        {/* 項目の表示 */}
-        {list2}
+        {listRender}
 
-        {/* ボタン */}
         <div className="mt-3">
           <Button variant="primary" size="lg" onClick={addItem}>
             項目を追加
