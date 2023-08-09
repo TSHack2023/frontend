@@ -12,27 +12,27 @@ interface Eval {
   explanation: string;
 }
 
-const ReviewDetail = (): JSX.Element => {
+const ReviewDetail = (fileid: number): JSX.Element => {
   const [filename, setFilename] = useState<string>("");
   const [fileurl, setFileurl] = useState<string>("");
   const [evallist, setEvallist] = useState<Eval[]>([]);
 
   useEffect(() => {
-    getDetailAPI();
+    getDetailAPI(fileid);
   }, []);
 
-  const getDetailAPI = (): void => {
+  const getDetailAPI = (fileid: number): void => {
     const testFilename = "file name";
     const testFileurl = "https://example";
     const testEval1: Eval = {
-      id: 0,
+      id: fileid,
       name: "name",
       min: 0,
       max: 2,
       explanation: "discription",
     };
     const testEval2: Eval = {
-      id: 1,
+      id: 2,
       name: "name2",
       min: 0,
       max: 10,

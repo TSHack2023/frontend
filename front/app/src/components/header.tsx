@@ -8,17 +8,17 @@ const Header = (): JSX.Element => {
     <div>
       <Navbar bg="dark" expand="lg" variant="dark">
         <Container>
-          <Navbar.Brand href="Home">Review PF</Navbar.Brand>
+          <Navbar.Brand href="/Home">Review PF</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link href="Home">Home</Nav.Link>
+              <Nav.Link href="/Home">Home</Nav.Link>
             </Nav>
             <Nav className="me-auto">
-              <Nav.Link href="Contribute">Contribute</Nav.Link>
+              <Nav.Link href="/Contribute">Contribute</Nav.Link>
             </Nav>
             <Nav className="me-auto">
-              <Nav.Link href="Review">Review</Nav.Link>
+              <Nav.Link href="/Review">Review</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>

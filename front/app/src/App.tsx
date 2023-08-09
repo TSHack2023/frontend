@@ -29,9 +29,7 @@ const App = (): JSX.Element => {
           <Route path="/Contribute">
             <Contribute />
           </Route>
-          <Route path="/Review/a">
-            <ReviewDetail />
-          </Route>
+          <Route path="/Review/:fileid" component={ReviewDetail}></Route>
           <Route path="/Review">
             <Review />
           </Route>
