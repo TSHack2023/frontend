@@ -10,6 +10,7 @@ const Signin = (): JSX.Element => {
     <>
       <Container>
         <Form>
+          {/* アドレス入力フォーム */}
           <Form.Group controlId="emailAddress">
             <Form.Label>Email address</Form.Label>
             <Form.Control
@@ -21,6 +22,8 @@ const Signin = (): JSX.Element => {
               }}
             />
           </Form.Group>
+
+          {/* パスワード入力フォーム */}
           <Form.Group controlId="passWord">
             <Form.Label class="mt-3">Password</Form.Label>
             <Form.Control
@@ -33,6 +36,7 @@ const Signin = (): JSX.Element => {
             />
           </Form.Group>
         </Form>
+        {/* ボタン */}
         <Button className="mt-3" variant="primary" size="lg">
           Sign in
         </Button>{" "}
