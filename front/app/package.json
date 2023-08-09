@@ -25,7 +25,8 @@
     "start": "WATCHPACK_POLLING=true react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore . --fix"
   },
   "eslintConfig": {
     "extends": [
