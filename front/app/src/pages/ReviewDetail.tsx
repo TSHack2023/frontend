@@ -135,7 +135,9 @@ const ReviewDetail = (fileid: number): JSX.Element => {
       <Header />
       <Container className="my-5">
         <Container>
-          <Button className="secondary mb-5">一覧に戻る</Button>
+          <Button className="secondary mb-5" href="/Review">
+            一覧に戻る
+          </Button>
         </Container>
         <Container className="mb-5">
           <p>ファイル名：{filename}</p>

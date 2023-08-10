@@ -14,9 +14,15 @@ const Contribute = (): JSX.Element => {
   const [list, setList] = useState<number[]>([]);
   const [evalname, setEvalName] = useState("");
 
-  const initIteminfo = () => {
+  const initIteminfo = (): void => {
     const newlist = list.map((item) => {
-      const newinfo: Items = {id: item, evalname: "", evalmin: 0, evalmax: 0, explanation: ""};
+      const newinfo: Items = {
+        id: item,
+        evalname: "",
+        evalmin: 0,
+        evalmax: 0,
+        explanation: "",
+      };
       return newinfo;
     });
     setIteminfo(newlist);
@@ -26,13 +32,25 @@ const Contribute = (): JSX.Element => {
     initIteminfo();
   }, [list]);
 
-  const changeIteminfo = (id: number, evalname: string, evalmin: number, evalmax: number, explanation: string) => {
-    const newitem: Items = {id: id, evalname: evalname, evalmin: evalmin, evalmax: evalmax, explanation: explanation};
-    const newlist = iteminfo.map((item) => 
-      item.id === newitem.id ? newitem: item,
+  const changeIteminfo = (
+    id: number,
+    evalname: string,
+    evalmin: number,
+    evalmax: number,
+    explanation: string,
+  ): void => {
+    const newitem: Items = {
+      id: id,
+      evalname: evalname,
+      evalmin: evalmin,
+      evalmax: evalmax,
+      explanation: explanation,
+    };
+    const newlist = iteminfo.map((item) =>
+      item.id === newitem.id ? newitem : item,
     );
     setIteminfo(newlist);
-  }
+  };
 
   const sasToken =
     process.env.REACT_APP_AZURE_SHARED_ACCESS_SIGNATURE ?? "sasToken";
