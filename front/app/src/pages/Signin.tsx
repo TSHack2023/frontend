@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
-import { Button } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import axios from "axios";
 
 const Signin = (): JSX.Element => {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const [show, setShow] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
+  const [errCode, setErrCode] = useState("");
 
   const endpoint = "/login";
   const baseUrl = process.env.REACT_APP_API_BASE_URL ?? "baseUrl";
@@ -26,7 +29,9 @@ const Signin = (): JSX.Element => {
         }
       })
       .catch((err) => {
-        console.log(err.message);
+        setErrMsg("サーバとの通信に失敗しました。\n");
+        setErrCode(err.message);
+        setShow(true);
       });
   };
 
@@ -75,6 +80,23 @@ const Signin = (): JSX.Element => {
           Sign up
         </Button>
       </Container>
+
+      <Modal
+        show={show}
+        onHide={() => {
+          setShow(false);
+        }}
+      >
+        <Modal.Header
+          closeButton
+          onClick={() => {
+            setShow(false);
+          }}
+        >
+          <Modal.Title>{errMsg}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{errCode}</Modal.Body>
+      </Modal>
     </>
   );
 };
