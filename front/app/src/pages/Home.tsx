@@ -43,10 +43,10 @@ const Home = (): JSX.Element => {
   const apiUrl = baseUrl + endpoint;
 
   useEffect(() => {
-    getfileAPI();
+    searchfileAPI();
   }, []);
 
-  const getfileAPI = (): void => {
+  const searchfileAPI = (): void => {
     const id = sessionStorage.getItem("id");
     if (id !== null) {
       setUsername(id);
