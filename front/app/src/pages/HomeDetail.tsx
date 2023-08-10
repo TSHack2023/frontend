@@ -10,7 +10,7 @@ interface EvaluationItem {
   name: string;
   evaluations: number[];
 }
-        
+
 interface AnswerList {
   username: string;
   scorelist: Answer[];
@@ -50,7 +50,7 @@ const HomeDetail = (fileid: number): JSX.Element => {
         console.log(err.message);
       });
   };
-    
+
   const labels = ["評価項目1", "評価項目2", "評価項目3"]; // ラベルを定義
   const evaluationItems: EvaluationItem[] = [
     {
