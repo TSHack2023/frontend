@@ -3,15 +3,23 @@ import { Button, Col, Form, Row } from "react-bootstrap";
 
 interface Props {
   id: number;
-  func: (id: number) => void;
+  deleteItem: (id: number) => void;
+  changeIteminfo: (id: number, evalname: string, evalmin: number, evalmax: number, explanation: string) => void;
+}
+
+export type Items = {
+  id: number;
+  evalname: string;
+  evalmin: number;
+  evalmax: number;
+  explanation: string;
 }
 
 const EvalItem = (props: Props): JSX.Element => {
-  const itemId = props.id;
-  const [evalname, setEvalName] = useState("");
-  const [evalmax, setEvalmax] = useState<number>(0);
-  const [evalmin, setEvalmin] = useState<number>(0);
-  const [explanation, setExplanation] = useState("");
+  const [item, setItem] = useState<Items>(
+    {id: props.id, evalname: "", evalmax: 0, evalmin: 0, explanation: ""}
+  );
+
   return (
     <>
       <Form>
@@ -22,9 +30,10 @@ const EvalItem = (props: Props): JSX.Element => {
           <Col sm="2">
             <Form.Control
               type="text"
-              value={evalname}
+              value={item.evalname}
               onChange={(e) => {
-                setEvalName(e.target.value);
+                setItem({...item, evalname: e.target.value})
+                props.changeIteminfo(item.id, item.evalname, item.evalmin, item.evalmax, item.explanation);
               }}
             />
           </Col>
@@ -35,9 +44,10 @@ const EvalItem = (props: Props): JSX.Element => {
           <Col sm="2">
             <Form.Control
               type="number"
-              value={evalmax}
+              value={item.evalmax}
               onChange={(e) => {
-                setEvalmax(Number(e.target.value));
+                setItem({...item, evalmax: Number(e.target.value)});
+                props.changeIteminfo(item.id, item.evalname, item.evalmin, item.evalmax, item.explanation);
               }}
             />
           </Col>
@@ -48,9 +58,10 @@ const EvalItem = (props: Props): JSX.Element => {
           <Col sm="2">
             <Form.Control
               type="number"
-              value={evalmin}
+              value={item.evalmin}
               onChange={(e) => {
-                setEvalmin(Number(e.target.value));
+                setItem({...item, evalmin: Number(e.target.value)});
+                props.changeIteminfo(item.id, item.evalname, item.evalmin, item.evalmax, item.explanation);
               }}
             />
           </Col>
@@ -63,9 +74,10 @@ const EvalItem = (props: Props): JSX.Element => {
           <Col sm="10">
             <Form.Control
               type="text"
-              value={explanation}
+              value={item.explanation}
               onChange={(e) => {
-                setExplanation(e.target.value);
+                setItem({...item, explanation: e.target.value});
+                props.changeIteminfo(item.id, item.evalname, item.evalmin, item.evalmax, item.explanation);
               }}
             />
           </Col>
@@ -73,7 +85,7 @@ const EvalItem = (props: Props): JSX.Element => {
             variant="danger"
             size="sm"
             onClick={() => {
-              props.func(itemId);
+              props.deleteItem(item.id);
             }}
           >
             項目を削除
