@@ -64,7 +64,6 @@ const Contribute = (): JSX.Element => {
   const deleteItem = (id: number): void => {
     const newList = list.filter((item) => item !== id);
     setList(newList);
-    console.log(iteminfo);
   };
 
   const listRender = list.map((item) => {
@@ -117,7 +116,6 @@ const Contribute = (): JSX.Element => {
             size="lg"
             onClick={() => {
               addItem();
-              console.log(iteminfo);
             }}
           >
             項目を追加
