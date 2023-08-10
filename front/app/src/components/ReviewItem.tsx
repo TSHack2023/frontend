@@ -3,11 +3,18 @@ import { Form } from "react-bootstrap";
 import RangeSlider from "react-bootstrap-range-slider";
 import Container from "react-bootstrap/Container";
 
+interface ScoreItem {
+  eval_id: number;
+  score: number;
+}
+
 interface Props {
+  id: number;
   name: string;
   min: number;
   max: number;
   explanation: string;
+  changeScoreList: (evalId: number, score: number) => void;
 }
 
 const ReviewItem = (props: Props): JSX.Element => {
@@ -16,18 +23,23 @@ const ReviewItem = (props: Props): JSX.Element => {
 
   const setValidValue = (valueString: string): void => {
     if (Number.isNaN(valueString)) {
-      setValue(initValue.toString());
+      setValue(initValue);
+      props.changeScoreList(props.id, Number(initValue));
     } else {
       const valueNum = parseInt(valueString, 10);
       if (Number.isNaN(valueString)) {
-        setValue(initValue.toString());
+        setValue(initValue);
+        props.changeScoreList(props.id, Number(initValue));
       } else {
         if (valueNum <= props.min) {
           setValue(props.min.toString());
+          props.changeScoreList(props.id, props.min);
         } else if (valueNum >= props.max) {
           setValue(props.max.toString());
+          props.changeScoreList(props.id, props.max);
         } else {
           setValue(valueNum.toString());
+          props.changeScoreList(props.id, valueNum);
         }
       }
     }
