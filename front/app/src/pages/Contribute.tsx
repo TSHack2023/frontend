@@ -7,31 +7,43 @@ import type { Items } from "../components/EvalItem";
 
 const Contribute = (): JSX.Element => {
   const [filename, setFilename] = useState<string>("");
-  // EvalItemコンポーネントに付与するIDを格納するための配列
-  const [iteminfo, setIteminfo] = useState<Items[]>([]);
-  
-  const [list, setList] = useState<number[]>([]);
-  const [evalname, setEvalName] = useState("");
+  const [iteminfo, setIteminfo] = useState<Items[]>([]); // 入力された情報をオブジェクトを用いて、コンポーネントごとに管理する配列
+  const [list, setList] = useState<number[]>([]); // EvalItemコンポーネントに付与するIDを格納するための配列
 
+  // 初期化のための関数
   const initIteminfo = () => {
     const newlist = list.map((item) => {
-      const newinfo: Items = {id: item, evalname: "", evalmin: 0, evalmax: 0, explanation: ""};
+      const newinfo: Items = {
+        id: item,
+        evalname: "",
+        evalmin: 0,
+        evalmax: 0,
+        explanation: "",
+      };
       return newinfo;
     });
     setIteminfo(newlist);
   };
 
+  // listに変更があると、initIteminfo()が自動的に起動するようにした
   useEffect(() => {
     initIteminfo();
   }, [list]);
 
-  const changeIteminfo = (id: number, evalname: string, evalmin: number, evalmax: number, explanation: string) => {
-    const newitem: Items = {id: id, evalname: evalname, evalmin: evalmin, evalmax: evalmax, explanation: explanation};
-    const newlist = iteminfo.map((item) => 
-      item.id === newitem.id ? newitem: item,
+  // setIteminfo()によりiteminfoを更新 / これを子コンポーネントに渡す
+  const changeIteminfo = (
+    id: number,
+    evalname: string,
+    evalmin: number,
+    evalmax: number,
+    explanation: string,
+  ) => {
+    const newitem: Items = { id, evalname, evalmin, evalmax, explanation };
+    const newlist = iteminfo.map((item) =>
+      item.id === newitem.id ? newitem : item,
     );
     setIteminfo(newlist);
-  }
+  };
 
   const randomInt = (min: number, max: number): number => {
     min = Math.ceil(min);
@@ -52,6 +64,7 @@ const Contribute = (): JSX.Element => {
   const deleteItem = (id: number): void => {
     const newList = list.filter((item) => item !== id);
     setList(newList);
+    console.log(iteminfo);
   };
 
   const listRender = list.map((item) => {
@@ -104,7 +117,7 @@ const Contribute = (): JSX.Element => {
             size="lg"
             onClick={() => {
               addItem();
-              console.log();
+              console.log(iteminfo);
             }}
           >
             項目を追加
