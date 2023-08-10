@@ -15,12 +15,6 @@ const App = (): JSX.Element => {
     <div>
       <BrowserRouter>
         <Switch>
-          <Route path="/Signin">
-            <Signin />
-          </Route>
-          <Route path="/Signup">
-            <Signup />
-          </Route>
           <Route path="/Home/detail">
             <HomeDetail />
           </Route>
@@ -35,13 +29,29 @@ const App = (): JSX.Element => {
             <Review />
           </Route>
           {id !== null ? (
-            <Route path="/">
-              <Redirect to="/Home" />
-            </Route>
+            <>
+              <Route path="/">
+                <Redirect to="/Home" />
+              </Route>
+              <Route path="/Signin">
+                <Redirect to="/Home" />
+              </Route>
+              <Route path="/Signup">
+                <Redirect to="/Home" />
+              </Route>
+            </>
           ) : (
-            <Route path="/">
-              <Redirect to="/Signin" />
-            </Route>
+            <>
+              <Route path="/">
+                <Redirect to="/Signin" />
+              </Route>
+              <Route path="/Signin">
+                <Signin />
+              </Route>
+              <Route path="/Signup">
+                <Signup />
+              </Route>
+            </>
           )}
         </Switch>
       </BrowserRouter>
