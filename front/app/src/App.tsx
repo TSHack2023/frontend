@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import Header from "./components/header";
 import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
@@ -10,6 +10,8 @@ import ReviewDetail from "./pages/ReviewDetail";
 import Review from "./pages/Review";
 
 const App = (): JSX.Element => {
+  const id = sessionStorage.getItem("id");
+
   return (
     <div>
       <BrowserRouter>
@@ -33,9 +35,15 @@ const App = (): JSX.Element => {
           <Route path="/Review">
             <Review />
           </Route>
-          <Route path="/">
-            <Header />
-          </Route>
+          {id !== null ? (
+            <Route path="/">
+              <Redirect to="/Home" />
+            </Route>
+          ) : (
+            <Route path="/">
+              <Redirect to="/Signin" />
+            </Route>
+          )}
         </Switch>
       </BrowserRouter>
     </div>
