@@ -1,20 +1,57 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Container from "react-bootstrap/Container";
 import ListGroup from "react-bootstrap/ListGroup";
 import Button from "react-bootstrap/Button";
 import Header from "../components/header";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 interface EvaluationItem {
   name: string;
   evaluations: number[];
 }
+        
+interface AnswerList {
+  username: string;
+  scorelist: Answer[];
+}
 
-const HomeDetail = (): JSX.Element => {
+interface Answer {
+  score_id: number;
+  evalname: string;
+  score: number;
+}
+
+const HomeDetail = (fileid: number): JSX.Element => {
+  const [answerlist, setAnswerlist] = useState<AnswerList[]>([]);
   const fileName = "example.txt"; // ファイル名
 
-  const labels = ["評価項目1", "評価項目2", "評価項目3"]; // ラベルを定義
+  const endpoint = "/accessanswer";
+  const baseUrl = process.env.REACT_APP_API_BASE_URL ?? "baseUrl";
+  const apiUrl = baseUrl + endpoint;
 
+  useEffect(() => {
+    accessanswerAPI();
+  }, []);
+
+  const accessanswerAPI = (): void => {
+    axios
+      .get(apiUrl, {
+        params: {
+          file_id: fileid,
+        },
+      })
+      .then((res) => {
+        if (res.data.result === true) {
+          setAnswerlist(res.data.answerlist);
+        }
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  };
+    
+  const labels = ["評価項目1", "評価項目2", "評価項目3"]; // ラベルを定義
   const evaluationItems: EvaluationItem[] = [
     {
       name: "Alice",
@@ -49,6 +86,21 @@ const HomeDetail = (): JSX.Element => {
     a.click();
     URL.revokeObjectURL(url);
   };
+
+  const answerlistRender = answerlist.map((item) => {
+    return (
+      <ListGroup.Item key={item.username}>
+        <h3>{item.username}</h3>
+        <ul>
+          {item.scorelist.map((evalItem) => (
+            <li key={evalItem.score_id}>
+              {evalItem.evalname}: {evalItem.score}
+            </li>
+          ))}
+        </ul>
+      </ListGroup.Item>
+    );
+  });
 
   return (
     <div>

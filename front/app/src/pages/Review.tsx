@@ -1,10 +1,66 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Container from "react-bootstrap/Container";
 import ListGroup from "react-bootstrap/ListGroup";
 import Button from "react-bootstrap/Button";
 import Header from "../components/header";
 import { Link } from "react-router-dom";
+import axios from "axios";
+
+interface FileItem {
+  file_id: number;
+  filename: string;
+  username: string;
+  created_at: Date;
+}
+
 const Review = (): JSX.Element => {
+  const [fileList, setFileList] = useState<FileItem[]>([]);
+
+  const endpoint = "/getfile";
+  const baseUrl = process.env.REACT_APP_API_BASE_URL ?? "baseUrl";
+  const apiUrl = baseUrl + endpoint;
+
+  useEffect(() => {
+    getfileAPI();
+  }, []);
+
+  const getfileAPI = (): void => {
+    axios
+      .get(apiUrl)
+      .then((res) => {
+        if (res.data.result === true) {
+          setFileList(res.data.filelist);
+        }
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  };
+
+  const fileListRender = fileList.map((item) => {
+    const link = "/Review/" + item.file_id.toString();
+    return (
+      <ListGroup.Item key={item.file_id}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <div>
+            <h5>ファイル名: {item.filename}</h5>
+            <p>投稿者: {item.username}</p>
+            <p>投稿日時: {item.created_at.toLocaleString()}</p>
+          </div>
+          <Link to={link}>
+            <Button variant="primary">評価する</Button>
+          </Link>
+        </div>
+      </ListGroup.Item>
+    );
+  });
+
   const reviewItems = [
     {
       fileName: "example.mp3",
