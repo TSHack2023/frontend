@@ -5,14 +5,54 @@ import { Button, Col, Form, Row } from "react-bootstrap";
 import EvalItem from "../components/EvalItem";
 import uploadFile2AzureStorage from "../components/azureStorage";
 import type { Items } from "../components/EvalItem";
+import axios from "axios";
 const Contribute = (): JSX.Element => {
   const [filename, setFilename] = useState<string>("");
-  // EvalItemコンポーネントに付与するIDを格納するための配列
   const [iteminfo, setIteminfo] = useState<Items[]>([]);
   const [file, setFile] = useState<File>();
-  const [url, setURL] = useState<string>();
-  const [list, setList] = useState<number[]>([]);
-  const [evalname, setEvalName] = useState("");
+  const [url, setURL] = useState<string>("");
+  const [list, setList] = useState<number[]>([]); // EvalItemコンポーネントに付与するIDを格納するための配列
+
+  const endpoint = "/fileupload";
+  const baseUrl = process.env.REACT_APP_API_BASE_URL ?? "baseUrl";
+  const apiUrl = baseUrl + endpoint;
+
+  useEffect(() => {
+    initIteminfo();
+  }, [list]);
+
+  const fileuploadAPI = (): void => {
+    const id = sessionStorage.getItem("id");
+    if (id !== null) {
+      const sasToken =
+        process.env.REACT_APP_AZURE_SHARED_ACCESS_SIGNATURE ?? "";
+      const evalList = iteminfo.map((item) => {
+        const newItem = {
+          evalname: item.evalname,
+          evalmin: item.evalmin,
+          evalmax: item.evalmax,
+          explanation: item.explanation,
+        };
+        return newItem;
+      });
+      void upload();
+      axios
+        .post(apiUrl, {
+          username: id,
+          filename: filename,
+          fileurl: url + sasToken,
+          evallist: evalList,
+        })
+        .then((res) => {
+          if (res.data.result === true) {
+            console.log(res.status);
+          }
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
+    }
+  };
 
   const initIteminfo = (): void => {
     const newlist = list.map((item) => {
@@ -27,10 +67,6 @@ const Contribute = (): JSX.Element => {
     });
     setIteminfo(newlist);
   };
-
-  useEffect(() => {
-    initIteminfo();
-  }, [list]);
 
   const changeIteminfo = (
     id: number,
@@ -93,7 +129,7 @@ const Contribute = (): JSX.Element => {
   };
 
   const submit = (): void => {
-    void upload();
+    fileuploadAPI();
   };
 
   const listRender = list.map((item) => {

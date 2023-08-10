@@ -25,7 +25,7 @@ const ReviewDetail = (fileid: number): JSX.Element => {
   const [scorelist, setScorelist] = useState<ScoreItem[]>([]);
 
   const getEndpoint = "/filereview";
-  const postEndpoint = "/flieupload";
+  const postEndpoint = "/answer";
   const baseUrl = process.env.REACT_APP_API_BASE_URL ?? "baseUrl";
   const getApiUrl = baseUrl + getEndpoint;
   const postApiUrl = baseUrl + postEndpoint;
