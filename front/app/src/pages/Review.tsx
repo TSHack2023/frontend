@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Container from "react-bootstrap/Container";
 import ListGroup from "react-bootstrap/ListGroup";
-import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Header from "../components/header";
 import { Link } from "react-router-dom";
 import axios from "axios";
-
+import { Button, Modal } from "react-bootstrap";
 interface FileItem {
   file_id: number;
   filename: string;
@@ -20,7 +19,9 @@ const Review = (): JSX.Element => {
   const endpoint = "/getfile";
   const baseUrl = process.env.REACT_APP_API_BASE_URL ?? "baseUrl";
   const apiUrl = baseUrl + endpoint;
-
+  const [errMsg,setErrMsg] = useState("");
+  const [errCode,setErrCode] = useState("");
+  const [show, setShow] = useState(false);
   useEffect(() => {
     getfileAPI();
   }, []);
@@ -34,7 +35,9 @@ const Review = (): JSX.Element => {
         }
       })
       .catch((err) => {
-        console.log(err.message);
+        setErrMsg("サーバとの通信に失敗しました。\n");
+        setErrCode(err.message);
+        setShow(true);
       });
   };
 
@@ -192,6 +195,22 @@ const Review = (): JSX.Element => {
           ))}
         </ListGroup>
       </Container>
+      <Modal
+        show={show}
+        onHide={() => {
+          setShow(false);
+        }}
+      >
+        <Modal.Header
+          closeButton
+          onClick={() => {
+            setShow(false);
+          }}
+        >
+          <Modal.Title>{errMsg}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{errCode}</Modal.Body>
+      </Modal>
     </div>
   );
 };
