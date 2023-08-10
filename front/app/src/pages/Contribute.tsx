@@ -3,13 +3,14 @@ import Container from "react-bootstrap/Container";
 import Header from "../components/header";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import EvalItem from "../components/EvalItem";
+import uploadFile2AzureStorage from "../components/azureStorage";
 import type { Items } from "../components/EvalItem";
-
 const Contribute = (): JSX.Element => {
   const [filename, setFilename] = useState<string>("");
   // EvalItemコンポーネントに付与するIDを格納するための配列
   const [iteminfo, setIteminfo] = useState<Items[]>([]);
-  
+  const [file, setFile] = useState<File>();
+  const [url, setURL] = useState<string>();
   const [list, setList] = useState<number[]>([]);
   const [evalname, setEvalName] = useState("");
 
@@ -33,6 +34,25 @@ const Contribute = (): JSX.Element => {
     setIteminfo(newlist);
   }
 
+  const sasToken =
+    process.env.REACT_APP_AZURE_SHARED_ACCESS_SIGNATURE ?? "sasToken";
+
+  const onFileChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    const files = event.target.files;
+    if (files != null) {
+      if (files.length > 0) {
+        setFile(files[0]);
+      }
+    }
+  };
+
+  const upload = async (): Promise<void> => {
+    if (file != null) {
+      const tmp = await uploadFile2AzureStorage(file);
+      setURL(tmp);
+    }
+  };
+
   const randomInt = (min: number, max: number): number => {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -52,6 +72,10 @@ const Contribute = (): JSX.Element => {
   const deleteItem = (id: number): void => {
     const newList = list.filter((item) => item !== id);
     setList(newList);
+  };
+
+  const submit = (): void => {
+    void upload();
   };
 
   const listRender = list.map((item) => {
@@ -86,7 +110,14 @@ const Contribute = (): JSX.Element => {
             </Col>
           </Form.Group>
 
-          <Form.Group as={Row} className="mt-3" controlId="fileUpload">
+          <Form.Group
+            as={Row}
+            className="mt-3"
+            controlId="fileUpload"
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              onFileChange(event);
+            }}
+          >
             <Form.Label column sm="1">
               ファイル
             </Form.Label>
@@ -111,7 +142,13 @@ const Contribute = (): JSX.Element => {
           </Button>{" "}
         </div>
         <div className="mt-3">
-          <Button variant="success" size="lg">
+          <Button
+            variant="success"
+            size="lg"
+            onClick={() => {
+              submit();
+            }}
+          >
             投稿
           </Button>
         </div>
