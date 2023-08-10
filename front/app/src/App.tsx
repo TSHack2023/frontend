@@ -21,9 +21,7 @@ const App = (): JSX.Element => {
           <Route path="/Signup">
             <Redirect to="/Home" />
           </Route>
-          <Route path="/Home/detail">
-            <HomeDetail />
-          </Route>
+          <Route path="/Home/:fileid" component={HomeDetail}></Route>
           <Route path="/Home">
             <Home />
           </Route>

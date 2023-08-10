@@ -1,11 +1,50 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Container from "react-bootstrap/Container";
 import ListGroup from "react-bootstrap/ListGroup";
 import Button from "react-bootstrap/Button";
 import Header from "../components/header";
 import { Link } from "react-router-dom";
-const HomeDetail = (): JSX.Element => {
+import axios from "axios";
+
+interface AnswerList {
+  username: string;
+  scorelist: Answer[];
+}
+
+interface Answer {
+  score_id: number;
+  evalname: string;
+  score: number;
+}
+
+const HomeDetail = (fileid: number): JSX.Element => {
+  const [answerlist, setAnswerlist] = useState<AnswerList[]>([]);
   const fileName = "example.txt"; // ファイル名
+
+  const endpoint = "/accessanswer";
+  const baseUrl = process.env.REACT_APP_API_BASE_URL ?? "baseUrl";
+  const apiUrl = baseUrl + endpoint;
+
+  useEffect(() => {
+    accessanswerAPI();
+  }, []);
+
+  const accessanswerAPI = (): void => {
+    axios
+      .get(apiUrl, {
+        params: {
+          file_id: fileid,
+        },
+      })
+      .then((res) => {
+        if (res.data.result === true) {
+          setAnswerlist(res.data.answerlist);
+        }
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  };
 
   const evaluationItems = [
     {
@@ -33,6 +72,21 @@ const HomeDetail = (): JSX.Element => {
       ],
     },
   ]; // ファイル名、名前と評価項目、値の組み合わせ
+
+  const answerlistRender = answerlist.map((item) => {
+    return (
+      <ListGroup.Item key={item.username}>
+        <h3>{item.username}</h3>
+        <ul>
+          {item.scorelist.map((evalItem) => (
+            <li key={evalItem.score_id}>
+              {evalItem.evalname}: {evalItem.score}
+            </li>
+          ))}
+        </ul>
+      </ListGroup.Item>
+    );
+  });
 
   return (
     <div>
