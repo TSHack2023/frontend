@@ -1,12 +1,37 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Container from "react-bootstrap/Container";
 import Header from "../components/header";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import EvalItem from "../components/EvalItem";
+import type { Items } from "../components/EvalItem";
 
 const Contribute = (): JSX.Element => {
   const [filename, setFilename] = useState<string>("");
+  // EvalItemコンポーネントに付与するIDを格納するための配列
+  const [iteminfo, setIteminfo] = useState<Items[]>([]);
+  
   const [list, setList] = useState<number[]>([]);
+  const [evalname, setEvalName] = useState("");
+
+  const initIteminfo = () => {
+    const newlist = list.map((item) => {
+      const newinfo: Items = {id: item, evalname: "", evalmin: 0, evalmax: 0, explanation: ""};
+      return newinfo;
+    });
+    setIteminfo(newlist);
+  };
+
+  useEffect(() => {
+    initIteminfo();
+  }, [list]);
+
+  const changeIteminfo = (id: number, evalname: string, evalmin: number, evalmax: number, explanation: string) => {
+    const newitem: Items = {id: id, evalname: evalname, evalmin: evalmin, evalmax: evalmax, explanation: explanation};
+    const newlist = iteminfo.map((item) => 
+      item.id === newitem.id ? newitem: item,
+    );
+    setIteminfo(newlist);
+  }
 
   const randomInt = (min: number, max: number): number => {
     min = Math.ceil(min);
@@ -30,7 +55,14 @@ const Contribute = (): JSX.Element => {
   };
 
   const listRender = list.map((item) => {
-    return <EvalItem key={item} id={item} func={deleteItem} />;
+    return (
+      <EvalItem
+        key={item}
+        id={item}
+        deleteItem={deleteItem}
+        changeIteminfo={changeIteminfo}
+      />
+    );
   });
 
   return (
@@ -67,7 +99,14 @@ const Contribute = (): JSX.Element => {
         {listRender}
 
         <div className="mt-3">
-          <Button variant="primary" size="lg" onClick={addItem}>
+          <Button
+            variant="primary"
+            size="lg"
+            onClick={() => {
+              addItem();
+              console.log();
+            }}
+          >
             項目を追加
           </Button>{" "}
         </div>
