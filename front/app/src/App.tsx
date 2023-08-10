@@ -11,19 +11,17 @@ import Review from "./pages/Review";
 const App = (): JSX.Element => {
   const id = sessionStorage.getItem("id");
 
-  return (
-    <div>
+  if (id !== null) {
+    return (
       <BrowserRouter>
         <Switch>
           <Route path="/Signin">
-            <Signin />
+            <Redirect to="/Home" />
           </Route>
           <Route path="/Signup">
-            <Signup />
+            <Redirect to="/Home" />
           </Route>
-          <Route path="/Home/detail">
-            <HomeDetail />
-          </Route>
+          <Route path="/Home/:fileid" component={HomeDetail}></Route>
           <Route path="/Home">
             <Home />
           </Route>
@@ -34,19 +32,44 @@ const App = (): JSX.Element => {
           <Route path="/Review">
             <Review />
           </Route>
-          {id !== null ? (
-            <Route path="/">
-              <Redirect to="/Home" />
-            </Route>
-          ) : (
-            <Route path="/">
-              <Redirect to="/Signin" />
-            </Route>
-          )}
+          <Route path="/">
+            <Redirect to="/Home" />
+          </Route>
         </Switch>
       </BrowserRouter>
-    </div>
-  );
+    );
+  } else {
+    return (
+      <BrowserRouter>
+        <Switch>
+          <Route path="/Signin">
+            <Signin />
+          </Route>
+          <Route path="/Signup">
+            <Signup />
+          </Route>
+          <Route path="/Home/detail">
+            <Redirect to="/Signin" />
+          </Route>
+          <Route path="/Home">
+            <Redirect to="/Signin" />
+          </Route>
+          <Route path="/Contribute">
+            <Redirect to="/Signin" />
+          </Route>
+          <Route path="/Review/:fileid">
+            <Redirect to="/Signin" />
+          </Route>
+          <Route path="/Review">
+            <Redirect to="/Signin" />
+          </Route>
+          <Route path="/">
+            <Redirect to="/Signin" />
+          </Route>
+        </Switch>
+      </BrowserRouter>
+    );
+  }
 };
 
 export default App;

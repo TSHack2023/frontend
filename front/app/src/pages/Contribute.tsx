@@ -1,18 +1,92 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Container from "react-bootstrap/Container";
 import Header from "../components/header";
 import { Button, Col, Form, Row } from "react-bootstrap";
 import EvalItem from "../components/EvalItem";
 import uploadFile2AzureStorage from "../components/azureStorage";
-
+import type { Items } from "../components/EvalItem";
+import axios from "axios";
 const Contribute = (): JSX.Element => {
   const [filename, setFilename] = useState<string>("");
+  const [iteminfo, setIteminfo] = useState<Items[]>([]);
   const [file, setFile] = useState<File>();
-  const [url, setURL] = useState<string>();
-  const [list, setList] = useState<number[]>([]);
+  const [url, setURL] = useState<string>("");
+  const [list, setList] = useState<number[]>([]); // EvalItemコンポーネントに付与するIDを格納するための配列
 
-  const sasToken =
-    process.env.REACT_APP_AZURE_SHARED_ACCESS_SIGNATURE ?? "sasToken";
+  const endpoint = "/fileupload";
+  const baseUrl = process.env.REACT_APP_API_BASE_URL ?? "baseUrl";
+  const apiUrl = baseUrl + endpoint;
+
+  useEffect(() => {
+    initIteminfo();
+  }, [list]);
+
+  const fileuploadAPI = (): void => {
+    const id = sessionStorage.getItem("id");
+    if (id !== null) {
+      const sasToken =
+        process.env.REACT_APP_AZURE_SHARED_ACCESS_SIGNATURE ?? "";
+      const evalList = iteminfo.map((item) => {
+        const newItem = {
+          evalname: item.evalname,
+          evalmin: item.evalmin,
+          evalmax: item.evalmax,
+          explanation: item.explanation,
+        };
+        return newItem;
+      });
+      void upload();
+      axios
+        .post(apiUrl, {
+          username: id,
+          filename: filename,
+          fileurl: url + sasToken,
+          evallist: evalList,
+        })
+        .then((res) => {
+          if (res.data.result === true) {
+            console.log(res.status);
+          }
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
+    }
+  };
+
+  const initIteminfo = (): void => {
+    const newlist = list.map((item) => {
+      const newinfo: Items = {
+        id: item,
+        evalname: "",
+        evalmin: 0,
+        evalmax: 0,
+        explanation: "",
+      };
+      return newinfo;
+    });
+    setIteminfo(newlist);
+  };
+
+  const changeIteminfo = (
+    id: number,
+    evalname: string,
+    evalmin: number,
+    evalmax: number,
+    explanation: string,
+  ): void => {
+    const newitem: Items = {
+      id: id,
+      evalname: evalname,
+      evalmin: evalmin,
+      evalmax: evalmax,
+      explanation: explanation,
+    };
+    const newlist = iteminfo.map((item) =>
+      item.id === newitem.id ? newitem : item,
+    );
+    setIteminfo(newlist);
+  };
 
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const files = event.target.files;
@@ -52,11 +126,18 @@ const Contribute = (): JSX.Element => {
   };
 
   const submit = (): void => {
-    void upload();
+    fileuploadAPI();
   };
 
   const listRender = list.map((item) => {
-    return <EvalItem key={item} id={item} func={deleteItem} />;
+    return (
+      <EvalItem
+        key={item}
+        id={item}
+        deleteItem={deleteItem}
+        changeIteminfo={changeIteminfo}
+      />
+    );
   });
 
   return (
@@ -100,7 +181,14 @@ const Contribute = (): JSX.Element => {
         {listRender}
 
         <div className="mt-3">
-          <Button variant="primary" size="lg" onClick={addItem}>
+          <Button
+            variant="primary"
+            size="lg"
+            onClick={() => {
+              addItem();
+              console.log();
+            }}
+          >
             項目を追加
           </Button>{" "}
         </div>
