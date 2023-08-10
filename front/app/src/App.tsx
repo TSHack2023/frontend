@@ -1,6 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
-import Header from "./components/header";
+import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
 import Home from "./pages/Home";
@@ -10,19 +9,19 @@ import ReviewDetail from "./pages/ReviewDetail";
 import Review from "./pages/Review";
 
 const App = (): JSX.Element => {
-  return (
-    <div>
+  const id = sessionStorage.getItem("id");
+
+  if (id !== null) {
+    return (
       <BrowserRouter>
         <Switch>
           <Route path="/Signin">
-            <Signin />
+            <Redirect to="/Home" />
           </Route>
           <Route path="/Signup">
-            <Signup />
+            <Redirect to="/Home" />
           </Route>
-          <Route path="/Home/detail">
-            <HomeDetail />
-          </Route>
+          <Route path="/Home/:fileid" component={HomeDetail}></Route>
           <Route path="/Home">
             <Home />
           </Route>
@@ -34,12 +33,43 @@ const App = (): JSX.Element => {
             <Review />
           </Route>
           <Route path="/">
-            <Header />
+            <Redirect to="/Home" />
           </Route>
         </Switch>
       </BrowserRouter>
-    </div>
-  );
+    );
+  } else {
+    return (
+      <BrowserRouter>
+        <Switch>
+          <Route path="/Signin">
+            <Signin />
+          </Route>
+          <Route path="/Signup">
+            <Signup />
+          </Route>
+          <Route path="/Home/detail">
+            <Redirect to="/Signin" />
+          </Route>
+          <Route path="/Home">
+            <Redirect to="/Signin" />
+          </Route>
+          <Route path="/Contribute">
+            <Redirect to="/Signin" />
+          </Route>
+          <Route path="/Review/:fileid">
+            <Redirect to="/Signin" />
+          </Route>
+          <Route path="/Review">
+            <Redirect to="/Signin" />
+          </Route>
+          <Route path="/">
+            <Redirect to="/Signin" />
+          </Route>
+        </Switch>
+      </BrowserRouter>
+    );
+  }
 };
 
 export default App;
