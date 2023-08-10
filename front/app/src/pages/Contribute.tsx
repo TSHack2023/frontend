@@ -88,9 +88,6 @@ const Contribute = (): JSX.Element => {
     setIteminfo(newlist);
   };
 
-  const sasToken =
-    process.env.REACT_APP_AZURE_SHARED_ACCESS_SIGNATURE ?? "sasToken";
-
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const files = event.target.files;
     if (files != null) {

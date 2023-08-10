@@ -29,6 +29,8 @@ const ReviewDetail = (fileid: number): JSX.Element => {
   const baseUrl = process.env.REACT_APP_API_BASE_URL ?? "baseUrl";
   const getApiUrl = baseUrl + getEndpoint;
   const postApiUrl = baseUrl + postEndpoint;
+  const sasToken =
+    process.env.REACT_APP_AZURE_SHARED_ACCESS_SIGNATURE ?? "sasToken";
 
   useEffect(() => {
     testAPI();
@@ -142,7 +144,7 @@ const ReviewDetail = (fileid: number): JSX.Element => {
         <Container className="mb-5">
           <p>ファイル名：{filename}</p>
           <p>
-            リンク：<a href={fileurl}>{fileurl}</a>
+            リンク：<a href={fileurl + sasToken}>{fileurl}</a>
           </p>
         </Container>
         <Container>{evallistrender}</Container>
