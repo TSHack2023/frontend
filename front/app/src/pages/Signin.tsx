@@ -26,6 +26,10 @@ const Signin = (): JSX.Element => {
       .then((res) => {
         if (res.data.result === true) {
           sessionStorage.setItem("id", name);
+        } else {
+          setErrMsg("ログインに失敗しました。\n");
+          setErrCode("");
+          setShow(true);
         }
       })
       .catch((err) => {
