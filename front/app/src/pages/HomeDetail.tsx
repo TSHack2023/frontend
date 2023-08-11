@@ -135,21 +135,7 @@ const HomeDetail = (): JSX.Element => {
           </h4>
           <div style={{ width: "100px" }}></div>
         </div>
-        <ListGroup>
-          {evaluationItems.map((item, index) => (
-            <ListGroup.Item key={index}>
-              <h3>{item.name}</h3>
-              <ul>
-                {item.evaluations.map((evaluation, evalIndex) => (
-                  <li key={evalIndex}>
-                    {labels[evalIndex]}: {evaluation}
-                  </li>
-                ))}
-              </ul>
-            </ListGroup.Item>
-          ))}
-          {answerlistRender}
-        </ListGroup>
+        <ListGroup>{answerlistRender}</ListGroup>
       </Container>
 
       <ErrorPop

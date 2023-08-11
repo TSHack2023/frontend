@@ -25,6 +25,9 @@ const Signin = (): JSX.Element => {
       .then((res) => {
         if (res.data.result === true) {
           sessionStorage.setItem("id", name);
+          setErrMsg("ログインに失敗しました。\n");
+          setErrCode("");
+          setShow(true);
         } else {
           setErrMsg("ログインに失敗しました。\n");
           setErrCode("");

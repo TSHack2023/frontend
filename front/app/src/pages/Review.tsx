@@ -46,6 +46,7 @@ const Review = (): JSX.Element => {
       .get(apiUrl)
       .then((res) => {
         setFileList(res.data);
+        setFilteredItems(res.data);
       })
       .catch((err) => {
         setErrMsg("サーバとの通信に失敗しました。\n");

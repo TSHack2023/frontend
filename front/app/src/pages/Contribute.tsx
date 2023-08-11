@@ -11,6 +11,7 @@ const Contribute = (): JSX.Element => {
   const [filename, setFilename] = useState<string>("");
   const [iteminfo, setIteminfo] = useState<Items[]>([]);
   const [file, setFile] = useState<File>();
+  const [url, setUrl] = useState<string>("");
   const [list, setList] = useState<number[]>([]); // EvalItemコンポーネントに付与するIDを格納するための配列
   const [show, setShow] = useState(false);
   const [errMsg, setErrMsg] = useState("");
@@ -24,7 +25,7 @@ const Contribute = (): JSX.Element => {
     initIteminfo();
   }, [list]);
 
-  const fileuploadAPI = (url: string): void => {
+  const fileuploadAPI = (): void => {
     const id = sessionStorage.getItem("id");
     if (id !== null) {
       const evalList = iteminfo.map((item) => {
@@ -36,23 +37,33 @@ const Contribute = (): JSX.Element => {
         };
         return newItem;
       });
-      axios
-        .post(apiUrl, {
-          username: id,
-          filename: filename,
-          fileurl: url,
-          evallist: evalList,
-        })
-        .then((res) => {
-          if (res.data.result === true) {
-            console.log(res.status);
-          }
-        })
-        .catch((err) => {
-          setErrMsg("サーバとの通信に失敗しました。\n");
-          setErrCode(err.message);
-          setShow(true);
-        });
+      if (file !== undefined) {
+        uploadFile2AzureStorage(file)
+          .then((res) => {
+            axios
+              .post(apiUrl, {
+                username: id,
+                filename: filename,
+                fileurl: res,
+                evallist: evalList,
+              })
+              .then((res) => {
+                if (res.data.result === true) {
+                  console.log(res.status);
+                }
+              })
+              .catch((err) => {
+                setErrMsg("サーバとの通信に失敗しました。\n");
+                setErrCode(err.message);
+                setShow(true);
+              });
+          })
+          .catch((err) => {
+            setErrMsg("ファイルのアップロードに失敗しました。\n");
+            setErrCode(err.message);
+            setShow(true);
+          });
+      }
     } else {
       setErrMsg("ログイン情報の取得に失敗しました。\n");
       setErrCode("");
@@ -137,36 +148,8 @@ const Contribute = (): JSX.Element => {
     setList(newList);
   };
 
-  const upload = async (): Promise<string> => {
-    const id = sessionStorage.getItem("id");
-    if (id !== null) {
-      if (file !== undefined) {
-        await uploadFile2AzureStorage(file)
-          .then((res) => {
-            console.log(res);
-            return res;
-          })
-          .catch((err) => {
-            setErrMsg("ファイルのアップロードに失敗しました。\n");
-            setErrCode(err.message);
-            setShow(true);
-          });
-      } else {
-        setErrMsg("ファイルの取得に失敗しました。\n");
-        setErrCode("");
-        setShow(true);
-      }
-    } else {
-      setErrMsg("ログイン情報の取得に失敗しました。\n");
-      setErrCode("");
-      setShow(true);
-    }
-    return "";
-  };
-
-  const submit = async (): Promise<void> => {
-    const url = await upload();
-    fileuploadAPI(url);
+  const submit = (): void => {
+    fileuploadAPI();
   };
 
   const listRender = list.map((item) => {
@@ -237,7 +220,7 @@ const Contribute = (): JSX.Element => {
             variant="success"
             size="lg"
             onClick={() => {
-              void submit();
+              submit();
             }}
           >
             投稿
