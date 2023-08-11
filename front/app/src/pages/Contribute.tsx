@@ -6,12 +6,15 @@ import EvalItem from "../components/EvalItem";
 import uploadFile2AzureStorage from "../components/azureStorage";
 import type { Items } from "../components/EvalItem";
 import axios from "axios";
+import ErrorPop from "../components/errorPop";
 const Contribute = (): JSX.Element => {
   const [filename, setFilename] = useState<string>("");
   const [iteminfo, setIteminfo] = useState<Items[]>([]);
   const [file, setFile] = useState<File>();
-  const [url, setURL] = useState<string>("");
   const [list, setList] = useState<number[]>([]); // EvalItemコンポーネントに付与するIDを格納するための配列
+  const [show, setShow] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
+  const [errCode, setErrCode] = useState("");
 
   const endpoint = "/fileupload";
   const baseUrl = process.env.REACT_APP_API_BASE_URL ?? "baseUrl";
@@ -24,8 +27,6 @@ const Contribute = (): JSX.Element => {
   const fileuploadAPI = (): void => {
     const id = sessionStorage.getItem("id");
     if (id !== null) {
-      const sasToken =
-        process.env.REACT_APP_AZURE_SHARED_ACCESS_SIGNATURE ?? "";
       const evalList = iteminfo.map((item) => {
         const newItem = {
           evalname: item.evalname,
@@ -35,37 +36,65 @@ const Contribute = (): JSX.Element => {
         };
         return newItem;
       });
-      void upload();
-      axios
-        .post(apiUrl, {
-          username: id,
-          filename: filename,
-          fileurl: url + sasToken,
-          evallist: evalList,
-        })
-        .then((res) => {
-          if (res.data.result === true) {
-            console.log(res.status);
-          }
-        })
-        .catch((err) => {
-          console.log(err.message);
-        });
+      if (file !== undefined) {
+        uploadFile2AzureStorage(file)
+          .then((res) => {
+            axios
+              .post(apiUrl, {
+                username: id,
+                filename: filename,
+                fileurl: res,
+                evallist: evalList,
+              })
+              .then((res) => {
+                if (res.data.result === true) {
+                  console.log(res.status);
+                }
+              })
+              .catch((err) => {
+                setErrMsg("サーバとの通信に失敗しました。\n");
+                setErrCode(err.message);
+                setShow(true);
+              });
+          })
+          .catch((err) => {
+            setErrMsg("ファイルのアップロードに失敗しました。\n");
+            setErrCode(err.message);
+            setShow(true);
+          });
+      }
+    } else {
+      setErrMsg("ログイン情報の取得に失敗しました。\n");
+      setErrCode("");
+      setShow(true);
     }
   };
 
   const initIteminfo = (): void => {
     const newlist = list.map((item) => {
-      const newinfo: Items = {
-        id: item,
-        evalname: "",
-        evalmin: 0,
-        evalmax: 0,
-        explanation: "",
-      };
-      return newinfo;
+      const index = idCheck(item);
+      if (index === -1) {
+        const newinfo: Items = {
+          id: item,
+          evalname: "",
+          evalmin: 0,
+          evalmax: 0,
+          explanation: "",
+        };
+        return newinfo;
+      } else {
+        const newinfo = iteminfo[index];
+        return newinfo;
+      }
     });
     setIteminfo(newlist);
+  };
+
+  const idCheck = (id: number): number => {
+    const indexList = iteminfo.map((item) => {
+      return item.id === id ? 1 : -1;
+    });
+    return indexList.indexOf(1);
   };
 
   const changeIteminfo = (
@@ -94,13 +123,6 @@ const Contribute = (): JSX.Element => {
       if (files.length > 0) {
         setFile(files[0]);
       }
-    }
-  };
-
-  const upload = async (): Promise<void> => {
-    if (file != null) {
-      const tmp = await uploadFile2AzureStorage(file);
-      setURL(tmp);
     }
   };
 
@@ -204,6 +226,13 @@ const Contribute = (): JSX.Element => {
           </Button>
         </div>
       </Container>
+
+      <ErrorPop
+        show={show}
+        errMsg={errMsg}
+        errCode={errCode}
+        setShow={setShow}
+      />
     </>
   );
 };

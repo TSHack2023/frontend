@@ -4,6 +4,8 @@ import Header from "../components/header";
 import { Button } from "react-bootstrap";
 import ReviewItem from "../components/ReviewItem";
 import axios from "axios";
+import { useParams } from "react-router-dom";
+import ErrorPop from "../components/errorPop";
 
 interface Eval {
   eval_id: number;
@@ -18,12 +20,16 @@ interface ScoreItem {
   score: number;
 }
 
-const ReviewDetail = (fileid: number): JSX.Element => {
+const ReviewDetail = (): JSX.Element => {
   const [filename, setFilename] = useState<string>("");
   const [fileurl, setFileurl] = useState<string>("");
   const [evallist, setEvallist] = useState<Eval[]>([]);
   const [scorelist, setScorelist] = useState<ScoreItem[]>([]);
+  const [show, setShow] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
+  const [errCode, setErrCode] = useState("");
 
+  const urlParams = useParams<{ fileid: string }>();
   const getEndpoint = "/filereview";
   const postEndpoint = "/answer";
   const baseUrl = process.env.REACT_APP_API_BASE_URL ?? "baseUrl";
@@ -33,16 +39,14 @@ const ReviewDetail = (fileid: number): JSX.Element => {
     process.env.REACT_APP_AZURE_SHARED_ACCESS_SIGNATURE ?? "sasToken";
 
   useEffect(() => {
-    testAPI();
-    // filereviewAPI();
+    // testAPI();
+    filereviewAPI();
   }, []);
 
   const filereviewAPI = (): void => {
     axios
-      .get(getApiUrl, {
-        params: {
-          file_id: fileid,
-        },
+      .post(getApiUrl, {
+        file_id: Number(urlParams.fileid),
       })
       .then((res) => {
         if (res.data.result === true) {
@@ -53,32 +57,10 @@ const ReviewDetail = (fileid: number): JSX.Element => {
         }
       })
       .catch((err) => {
-        console.log(err.message);
+        setErrMsg("サーバとの通信に失敗しました。\n");
+        setErrCode(err.message);
+        setShow(true);
       });
-  };
-
-  const testAPI = (): void => {
-    const testFilename = "file name";
-    const testFileurl = "https://example";
-    const testEval1: Eval = {
-      eval_id: fileid,
-      evalname: "name",
-      evalmin: 0,
-      evalmax: 2,
-      explanation: "discription",
-    };
-    const testEval2: Eval = {
-      eval_id: 2,
-      evalname: "name2",
-      evalmin: 0,
-      evalmax: 10,
-      explanation: "discription",
-    };
-    const testEvallist: Eval[] = [testEval1, testEval2];
-    setFilename(testFilename);
-    setFileurl(testFileurl);
-    setEvallist(testEvallist);
-    initScoreList();
   };
 
   const answerAPI = (): void => {
@@ -87,7 +69,7 @@ const ReviewDetail = (fileid: number): JSX.Element => {
       axios
         .post(postApiUrl, {
           username: id,
-          file_id: fileid,
+          file_id: Number(urlParams.fileid),
           scorelist: scorelist,
         })
         .then((res) => {
@@ -159,6 +141,13 @@ const ReviewDetail = (fileid: number): JSX.Element => {
           </Button>
         </Container>
       </Container>
+
+      <ErrorPop
+        show={show}
+        errMsg={errMsg}
+        errCode={errCode}
+        setShow={setShow}
+      />
     </div>
   );
 };

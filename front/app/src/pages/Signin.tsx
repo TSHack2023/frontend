@@ -3,10 +3,14 @@ import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import { Button } from "react-bootstrap";
 import axios from "axios";
+import ErrorPop from "../components/errorPop";
 
 const Signin = (): JSX.Element => {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const [show, setShow] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
+  const [errCode, setErrCode] = useState("");
 
   const endpoint = "/login";
   const baseUrl = process.env.REACT_APP_API_BASE_URL ?? "baseUrl";
@@ -14,19 +18,26 @@ const Signin = (): JSX.Element => {
 
   const loginAPI = (): void => {
     axios
-      .get(apiUrl, {
-        params: {
-          username: name,
-          password: password,
-        },
+      .post(apiUrl, {
+        username: name,
+        password: password,
       })
       .then((res) => {
         if (res.data.result === true) {
           sessionStorage.setItem("id", name);
+          setErrMsg("ログインに成功しました。\n");
+          setErrCode("");
+          setShow(true);
+        } else {
+          setErrMsg("ログインに失敗しました。\n");
+          setErrCode("");
+          setShow(true);
         }
       })
       .catch((err) => {
-        console.log(err.message);
+        setErrMsg("サーバとの通信に失敗しました。\n");
+        setErrCode(err.message);
+        setShow(true);
       });
   };
 
@@ -75,6 +86,14 @@ const Signin = (): JSX.Element => {
           Sign up
         </Button>
       </Container>
+
+      <ErrorPop
+        show={show}
+        errMsg={errMsg}
+        errCode={errCode}
+        setShow={setShow}
+        redirectURL="/Signin"
+      />
     </>
   );
 };
