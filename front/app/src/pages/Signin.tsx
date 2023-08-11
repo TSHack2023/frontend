@@ -3,6 +3,7 @@ import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import { Button, Modal } from "react-bootstrap";
 import axios from "axios";
+import ErrorPop from "../components/errorPop";
 
 const Signin = (): JSX.Element => {
   const [name, setName] = useState("");
@@ -83,22 +84,12 @@ const Signin = (): JSX.Element => {
         </Button>
       </Container>
 
-      <Modal
+      <ErrorPop
         show={show}
-        onHide={() => {
-          setShow(false);
-        }}
-      >
-        <Modal.Header
-          closeButton
-          onClick={() => {
-            setShow(false);
-          }}
-        >
-          <Modal.Title>{errMsg}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>{errCode}</Modal.Body>
-      </Modal>
+        errMsg={errMsg}
+        errCode={errCode}
+        setShow={setShow}
+      />
     </>
   );
 };

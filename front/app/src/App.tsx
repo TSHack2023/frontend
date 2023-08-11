@@ -21,14 +21,18 @@ const App = (): JSX.Element => {
           <Route path="/Signup">
             <Redirect to="/Home" />
           </Route>
-          <Route path="/Home/:fileid" component={HomeDetail}></Route>
+          <Route path="/Home/:fileid">
+            <HomeDetail />
+          </Route>
           <Route path="/Home">
             <Home />
           </Route>
           <Route path="/Contribute">
             <Contribute />
           </Route>
-          <Route path="/Review/:fileid" component={ReviewDetail}></Route>
+          <Route path="/Review/:fileid">
+            <ReviewDetail />
+          </Route>
           <Route path="/Review">
             <Review />
           </Route>

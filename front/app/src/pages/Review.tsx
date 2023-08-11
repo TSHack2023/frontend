@@ -6,17 +6,29 @@ import Form from "react-bootstrap/Form";
 import Header from "../components/header";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { Modal } from "react-bootstrap";
+import ErrorPop from "../components/errorPop";
 
 interface FileItem {
-  file_id: number;
+  id: number;
   filename: string;
   username: string;
   created_at: Date;
 }
 
+interface Filter {
+  searchType: string;
+  filterValue: string;
+}
+
 const Review = (): JSX.Element => {
+  const initialFilterState: Filter = {
+    searchType: "author",
+    filterValue: "",
+  };
+
   const [fileList, setFileList] = useState<FileItem[]>([]);
+  const [filter, setFilter] = useState<Filter>(initialFilterState);
+  const [filteredItems, setFilteredItems] = useState<FileItem[]>(fileList);
   const [show, setShow] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [errCode, setErrCode] = useState("");
@@ -33,9 +45,7 @@ const Review = (): JSX.Element => {
     axios
       .get(apiUrl)
       .then((res) => {
-        if (res.data.result === true) {
-          setFileList(res.data.filelist);
-        }
+        setFileList(res.data);
       })
       .catch((err) => {
         setErrMsg("サーバとの通信に失敗しました。\n");
@@ -44,72 +54,53 @@ const Review = (): JSX.Element => {
       });
   };
 
-  const fileListRender = fileList.map((item) => {
-    const link = "/Review/" + item.file_id.toString();
-    return (
-      <ListGroup.Item key={item.file_id}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <div>
-            <h5>ファイル名: {item.filename}</h5>
-            <p>投稿者: {item.username}</p>
-            <p>投稿日時: {item.created_at.toLocaleString()}</p>
-          </div>
-          <Link to={link}>
-            <Button variant="primary">評価する</Button>
-          </Link>
-        </div>
-      </ListGroup.Item>
-    );
-  });
-
-  const reviewItems = [
-    {
-      fileName: "example.mp3",
-      author: "Alice",
-      timestamp: "2023-08-15 10:30 AM",
-    },
-    {
-      fileName: "document.wav",
-      author: "Bob",
-      timestamp: "2023-08-14 2:45 PM",
-    },
-    {
-      fileName: "aaa.wav",
-      author: "Charlie",
-      timestamp: "2023-08-13 5:20 PM",
-    },
-  ];
-
-  const initialFilterState = {
-    searchType: "author",
-    filterValue: "",
-  };
-
-  const [filter, setFilter] = useState(initialFilterState);
-  const [filteredItems, setFilteredItems] = useState(reviewItems);
-
-  const handleItems = (fileName: string, author: string): void => {
-    console.log("ファイル名:", fileName);
-    console.log("投稿者:", author);
+  const fileListRender = (): JSX.Element => {
+    if (filteredItems.length > 0) {
+      return (
+        <ListGroup>
+          {filteredItems.map((item) => {
+            const link = "/Review/" + item.id.toString();
+            return (
+              <ListGroup.Item key={item.id}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <div>
+                    <h5>ファイル名: {item.filename}</h5>
+                    <p>投稿者: {item.username}</p>
+                    <p>投稿日時: {item.created_at.toLocaleString()}</p>
+                  </div>
+                  <Link to={link}>
+                    <Button variant="primary">評価する</Button>
+                  </Link>
+                </div>
+              </ListGroup.Item>
+            );
+          })}
+        </ListGroup>
+      );
+    } else {
+      return <></>;
+    }
   };
 
   const handleSearch = (): void => {
-    const newFilteredItems = reviewItems.filter((item) => {
+    const newFilteredItems = fileList.filter((item) => {
       if (filter.searchType === "author") {
         return (
           filter.filterValue === "" ||
-          item.author.toLowerCase().startsWith(filter.filterValue.toLowerCase())
+          item.username
+            .toLowerCase()
+            .startsWith(filter.filterValue.toLowerCase())
         );
       } else if (filter.searchType === "fileName") {
         return (
           filter.filterValue === "" ||
-          item.fileName
+          item.filename
             .toLowerCase()
             .startsWith(filter.filterValue.toLowerCase())
         );
@@ -121,7 +112,7 @@ const Review = (): JSX.Element => {
 
   const handleReset = (): void => {
     setFilter(initialFilterState);
-    setFilteredItems(reviewItems);
+    setFilteredItems(fileList);
   };
 
   const handleKeyPress = (
@@ -168,54 +159,15 @@ const Review = (): JSX.Element => {
             </Button>
           </div>
         </div>
-        <ListGroup>
-          {filteredItems.map((item, index) => (
-            <ListGroup.Item key={index}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <div>
-                  <h5>ファイル名: {item.fileName}</h5>
-                  <p>投稿者: {item.author}</p>
-                  <p>投稿日時: {item.timestamp}</p>
-                </div>
-                <Link to={`/Review/a`}>
-                  <Button
-                    variant="primary"
-                    onClick={() => {
-                      handleItems(item.fileName, item.author);
-                    }}
-                  >
-                    評価する
-                  </Button>
-                </Link>
-              </div>
-            </ListGroup.Item>
-          ))}
-          {fileListRender}
-        </ListGroup>
+        {fileListRender()}
       </Container>
 
-      <Modal
+      <ErrorPop
         show={show}
-        onHide={() => {
-          setShow(false);
-        }}
-      >
-        <Modal.Header
-          closeButton
-          onClick={() => {
-            setShow(false);
-          }}
-        >
-          <Modal.Title>{errMsg}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>{errCode}</Modal.Body>
-      </Modal>
+        errMsg={errMsg}
+        errCode={errCode}
+        setShow={setShow}
+      />
     </div>
   );
 };

@@ -3,9 +3,10 @@ import Container from "react-bootstrap/Container";
 import ListGroup from "react-bootstrap/ListGroup";
 import Button from "react-bootstrap/Button";
 import Header from "../components/header";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { Modal } from "react-bootstrap";
+import ErrorPop from "../components/errorPop";
 
 interface EvaluationItem {
   name: string;
@@ -23,13 +24,14 @@ interface Answer {
   score: number;
 }
 
-const HomeDetail = (fileid: number): JSX.Element => {
+const HomeDetail = (): JSX.Element => {
   const [answerlist, setAnswerlist] = useState<AnswerList[]>([]);
   const [show, setShow] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [errCode, setErrCode] = useState("");
-  const fileName = "example.txt"; // ファイル名
 
+  const urlParams = useParams<{ fileid: string }>();
+  const fileName = "example.txt"; // ファイル名
   const endpoint = "/accessanswer";
   const baseUrl = process.env.REACT_APP_API_BASE_URL ?? "baseUrl";
   const apiUrl = baseUrl + endpoint;
@@ -40,10 +42,8 @@ const HomeDetail = (fileid: number): JSX.Element => {
 
   const accessanswerAPI = (): void => {
     axios
-      .get(apiUrl, {
-        params: {
-          file_id: fileid,
-        },
+      .post(apiUrl, {
+        file_id: Number(urlParams.fileid),
       })
       .then((res) => {
         if (res.data.result === true) {
@@ -152,22 +152,12 @@ const HomeDetail = (fileid: number): JSX.Element => {
         </ListGroup>
       </Container>
 
-      <Modal
+      <ErrorPop
         show={show}
-        onHide={() => {
-          setShow(false);
-        }}
-      >
-        <Modal.Header
-          closeButton
-          onClick={() => {
-            setShow(false);
-          }}
-        >
-          <Modal.Title>{errMsg}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>{errCode}</Modal.Body>
-      </Modal>
+        errMsg={errMsg}
+        errCode={errCode}
+        setShow={setShow}
+      />
     </div>
   );
 };

@@ -4,6 +4,8 @@ import Header from "../components/header";
 import { Button, Modal } from "react-bootstrap";
 import ReviewItem from "../components/ReviewItem";
 import axios from "axios";
+import { useParams } from "react-router-dom";
+import ErrorPop from "../components/errorPop";
 
 interface Eval {
   eval_id: number;
@@ -18,7 +20,7 @@ interface ScoreItem {
   score: number;
 }
 
-const ReviewDetail = (fileid: number): JSX.Element => {
+const ReviewDetail = (): JSX.Element => {
   const [filename, setFilename] = useState<string>("");
   const [fileurl, setFileurl] = useState<string>("");
   const [evallist, setEvallist] = useState<Eval[]>([]);
@@ -27,6 +29,7 @@ const ReviewDetail = (fileid: number): JSX.Element => {
   const [errMsg, setErrMsg] = useState("");
   const [errCode, setErrCode] = useState("");
 
+  const urlParams = useParams<{ fileid: string }>();
   const getEndpoint = "/filereview";
   const postEndpoint = "/answer";
   const baseUrl = process.env.REACT_APP_API_BASE_URL ?? "baseUrl";
@@ -43,7 +46,7 @@ const ReviewDetail = (fileid: number): JSX.Element => {
   const filereviewAPI = (): void => {
     axios
       .post(getApiUrl, {
-        file_id: fileid,
+        file_id: Number(urlParams.fileid),
       })
       .then((res) => {
         if (res.data.result === true) {
@@ -64,7 +67,7 @@ const ReviewDetail = (fileid: number): JSX.Element => {
     const testFilename = "file name";
     const testFileurl = "https://example";
     const testEval1: Eval = {
-      eval_id: fileid,
+      eval_id: Number(urlParams.fileid),
       evalname: "name",
       evalmin: 0,
       evalmax: 2,
@@ -90,7 +93,7 @@ const ReviewDetail = (fileid: number): JSX.Element => {
       axios
         .post(postApiUrl, {
           username: id,
-          file_id: fileid,
+          file_id: Number(urlParams.fileid),
           scorelist: scorelist,
         })
         .then((res) => {
@@ -163,22 +166,12 @@ const ReviewDetail = (fileid: number): JSX.Element => {
         </Container>
       </Container>
 
-      <Modal
+      <ErrorPop
         show={show}
-        onHide={() => {
-          setShow(false);
-        }}
-      >
-        <Modal.Header
-          closeButton
-          onClick={() => {
-            setShow(false);
-          }}
-        >
-          <Modal.Title>{errMsg}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>{errCode}</Modal.Body>
-      </Modal>
+        errMsg={errMsg}
+        errCode={errCode}
+        setShow={setShow}
+      />
     </div>
   );
 };

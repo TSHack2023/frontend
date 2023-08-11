@@ -6,11 +6,11 @@ import EvalItem from "../components/EvalItem";
 import uploadFile2AzureStorage from "../components/azureStorage";
 import type { Items } from "../components/EvalItem";
 import axios from "axios";
+import ErrorPop from "../components/errorPop";
 const Contribute = (): JSX.Element => {
   const [filename, setFilename] = useState<string>("");
   const [iteminfo, setIteminfo] = useState<Items[]>([]);
   const [file, setFile] = useState<File>();
-  const [url, setURL] = useState<string>("");
   const [list, setList] = useState<number[]>([]); // EvalItemコンポーネントに付与するIDを格納するための配列
   const [show, setShow] = useState(false);
   const [errMsg, setErrMsg] = useState("");
@@ -24,11 +24,9 @@ const Contribute = (): JSX.Element => {
     initIteminfo();
   }, [list]);
 
-  const fileuploadAPI = (): void => {
+  const fileuploadAPI = (url: string): void => {
     const id = sessionStorage.getItem("id");
     if (id !== null) {
-      const sasToken =
-        process.env.REACT_APP_AZURE_SHARED_ACCESS_SIGNATURE ?? "";
       const evalList = iteminfo.map((item) => {
         const newItem = {
           evalname: item.evalname,
@@ -38,12 +36,11 @@ const Contribute = (): JSX.Element => {
         };
         return newItem;
       });
-      void upload();
       axios
         .post(apiUrl, {
           username: id,
           filename: filename,
-          fileurl: url + sasToken,
+          fileurl: url,
           evallist: evalList,
         })
         .then((res) => {
@@ -56,21 +53,38 @@ const Contribute = (): JSX.Element => {
           setErrCode(err.message);
           setShow(true);
         });
+    } else {
+      setErrMsg("ログイン情報の取得に失敗しました。\n");
+      setErrCode("");
+      setShow(true);
     }
   };
 
   const initIteminfo = (): void => {
     const newlist = list.map((item) => {
-      const newinfo: Items = {
-        id: item,
-        evalname: "",
-        evalmin: 0,
-        evalmax: 0,
-        explanation: "",
-      };
-      return newinfo;
+      const index = idCheck(item);
+      if (index === -1) {
+        const newinfo: Items = {
+          id: item,
+          evalname: "",
+          evalmin: 0,
+          evalmax: 0,
+          explanation: "",
+        };
+        return newinfo;
+      } else {
+        const newinfo = iteminfo[index];
+        return newinfo;
+      }
     });
     setIteminfo(newlist);
+  };
+
+  const idCheck = (id: number): number => {
+    const indexList = iteminfo.map((item) => {
+      return item.id === id ? 1 : -1;
+    });
+    return indexList.indexOf(1);
   };
 
   const changeIteminfo = (
@@ -102,13 +116,6 @@ const Contribute = (): JSX.Element => {
     }
   };
 
-  const upload = async (): Promise<void> => {
-    if (file != null) {
-      const tmp = await uploadFile2AzureStorage(file);
-      setURL(tmp);
-    }
-  };
-
   const randomInt = (min: number, max: number): number => {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -130,8 +137,36 @@ const Contribute = (): JSX.Element => {
     setList(newList);
   };
 
-  const submit = (): void => {
-    fileuploadAPI();
+  const upload = async (): Promise<string> => {
+    const id = sessionStorage.getItem("id");
+    if (id !== null) {
+      if (file !== undefined) {
+        await uploadFile2AzureStorage(file)
+          .then((res) => {
+            console.log(res);
+            return res;
+          })
+          .catch((err) => {
+            setErrMsg("ファイルのアップロードに失敗しました。\n");
+            setErrCode(err.message);
+            setShow(true);
+          });
+      } else {
+        setErrMsg("ファイルの取得に失敗しました。\n");
+        setErrCode("");
+        setShow(true);
+      }
+    } else {
+      setErrMsg("ログイン情報の取得に失敗しました。\n");
+      setErrCode("");
+      setShow(true);
+    }
+    return "";
+  };
+
+  const submit = async (): Promise<void> => {
+    const url = await upload();
+    fileuploadAPI(url);
   };
 
   const listRender = list.map((item) => {
@@ -202,7 +237,7 @@ const Contribute = (): JSX.Element => {
             variant="success"
             size="lg"
             onClick={() => {
-              submit();
+              void submit();
             }}
           >
             投稿
@@ -210,22 +245,12 @@ const Contribute = (): JSX.Element => {
         </div>
       </Container>
 
-      <Modal
+      <ErrorPop
         show={show}
-        onHide={() => {
-          setShow(false);
-        }}
-      >
-        <Modal.Header
-          closeButton
-          onClick={() => {
-            setShow(false);
-          }}
-        >
-          <Modal.Title>{errMsg}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>{errCode}</Modal.Body>
-      </Modal>
+        errMsg={errMsg}
+        errCode={errCode}
+        setShow={setShow}
+      />
     </>
   );
 };

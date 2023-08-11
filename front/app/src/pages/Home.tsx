@@ -7,6 +7,7 @@ import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { Modal } from "react-bootstrap";
+import ErrorPop from "../components/errorPop";
 
 interface Item {
   file_id: number;
@@ -103,7 +104,7 @@ const Home = (): JSX.Element => {
                   <p>File: {item.filename}</p>
                   <p>Time（仮）: {item.created_at}</p>
                 </div>
-                <Link to="/home/detail">
+                <Link to="/home/1">
                   <Button variant="primary">評価を確認</Button>
                 </Link>
               </div>
@@ -113,22 +114,12 @@ const Home = (): JSX.Element => {
         </ListGroup>
       </Container>
 
-      <Modal
+      <ErrorPop
         show={show}
-        onHide={() => {
-          setShow(false);
-        }}
-      >
-        <Modal.Header
-          closeButton
-          onClick={() => {
-            setShow(false);
-          }}
-        >
-          <Modal.Title>{errMsg}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>{errCode}</Modal.Body>
-      </Modal>
+        errMsg={errMsg}
+        errCode={errCode}
+        setShow={setShow}
+      />
     </div>
   );
 };
