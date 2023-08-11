@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Container from "react-bootstrap/Container";
 import Header from "../components/header";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { Button, Col, Form, Modal, Row } from "react-bootstrap";
 import EvalItem from "../components/EvalItem";
 import uploadFile2AzureStorage from "../components/azureStorage";
 import type { Items } from "../components/EvalItem";
@@ -12,6 +12,9 @@ const Contribute = (): JSX.Element => {
   const [file, setFile] = useState<File>();
   const [url, setURL] = useState<string>("");
   const [list, setList] = useState<number[]>([]); // EvalItemコンポーネントに付与するIDを格納するための配列
+  const [show, setShow] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
+  const [errCode, setErrCode] = useState("");
 
   const endpoint = "/fileupload";
   const baseUrl = process.env.REACT_APP_API_BASE_URL ?? "baseUrl";
@@ -49,7 +52,9 @@ const Contribute = (): JSX.Element => {
           }
         })
         .catch((err) => {
-          console.log(err.message);
+          setErrMsg("サーバとの通信に失敗しました。\n");
+          setErrCode(err.message);
+          setShow(true);
         });
     }
   };
@@ -204,6 +209,23 @@ const Contribute = (): JSX.Element => {
           </Button>
         </div>
       </Container>
+
+      <Modal
+        show={show}
+        onHide={() => {
+          setShow(false);
+        }}
+      >
+        <Modal.Header
+          closeButton
+          onClick={() => {
+            setShow(false);
+          }}
+        >
+          <Modal.Title>{errMsg}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{errCode}</Modal.Body>
+      </Modal>
     </>
   );
 };

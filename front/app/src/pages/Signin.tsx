@@ -17,11 +17,9 @@ const Signin = (): JSX.Element => {
 
   const loginAPI = (): void => {
     axios
-      .get(apiUrl, {
-        params: {
-          username: name,
-          password: password,
-        },
+      .post(apiUrl, {
+        username: name,
+        password: password,
       })
       .then((res) => {
         if (res.data.result === true) {

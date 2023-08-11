@@ -6,6 +6,7 @@ import Header from "../components/header";
 import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { Modal } from "react-bootstrap";
 
 interface Item {
   file_id: number;
@@ -17,6 +18,9 @@ interface Item {
 const Home = (): JSX.Element => {
   const [username, setUsername] = useState<string>("");
   const [fileList, setFileList] = useState<Item[]>([]);
+  const [show, setShow] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
+  const [errCode, setErrCode] = useState("");
   const items = [
     {
       fileId: 0,
@@ -51,10 +55,8 @@ const Home = (): JSX.Element => {
     if (id !== null) {
       setUsername(id);
       axios
-        .get(apiUrl, {
-          params: {
-            username: username,
-          },
+        .post(apiUrl, {
+          username: username,
         })
         .then((res) => {
           if (res.data.result === true) {
@@ -62,7 +64,9 @@ const Home = (): JSX.Element => {
           }
         })
         .catch((err) => {
-          console.log(err.message);
+          setErrMsg("サーバとの通信に失敗しました。\n");
+          setErrCode(err.message);
+          setShow(true);
         });
     }
   };
@@ -105,8 +109,26 @@ const Home = (): JSX.Element => {
               </div>
             </ListGroup.Item>
           ))}
+          {fileListRender}
         </ListGroup>
       </Container>
+
+      <Modal
+        show={show}
+        onHide={() => {
+          setShow(false);
+        }}
+      >
+        <Modal.Header
+          closeButton
+          onClick={() => {
+            setShow(false);
+          }}
+        >
+          <Modal.Title>{errMsg}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{errCode}</Modal.Body>
+      </Modal>
     </div>
   );
 };

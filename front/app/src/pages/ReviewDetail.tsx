@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Container from "react-bootstrap/Container";
 import Header from "../components/header";
-import { Button } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import ReviewItem from "../components/ReviewItem";
 import axios from "axios";
 
@@ -23,6 +23,9 @@ const ReviewDetail = (fileid: number): JSX.Element => {
   const [fileurl, setFileurl] = useState<string>("");
   const [evallist, setEvallist] = useState<Eval[]>([]);
   const [scorelist, setScorelist] = useState<ScoreItem[]>([]);
+  const [show, setShow] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
+  const [errCode, setErrCode] = useState("");
 
   const getEndpoint = "/filereview";
   const postEndpoint = "/answer";
@@ -33,16 +36,14 @@ const ReviewDetail = (fileid: number): JSX.Element => {
     process.env.REACT_APP_AZURE_SHARED_ACCESS_SIGNATURE ?? "sasToken";
 
   useEffect(() => {
-    testAPI();
-    // filereviewAPI();
+    // testAPI();
+    filereviewAPI();
   }, []);
 
   const filereviewAPI = (): void => {
     axios
-      .get(getApiUrl, {
-        params: {
-          file_id: fileid,
-        },
+      .post(getApiUrl, {
+        file_id: fileid,
       })
       .then((res) => {
         if (res.data.result === true) {
@@ -53,7 +54,9 @@ const ReviewDetail = (fileid: number): JSX.Element => {
         }
       })
       .catch((err) => {
-        console.log(err.message);
+        setErrMsg("サーバとの通信に失敗しました。\n");
+        setErrCode(err.message);
+        setShow(true);
       });
   };
 
@@ -159,6 +162,23 @@ const ReviewDetail = (fileid: number): JSX.Element => {
           </Button>
         </Container>
       </Container>
+
+      <Modal
+        show={show}
+        onHide={() => {
+          setShow(false);
+        }}
+      >
+        <Modal.Header
+          closeButton
+          onClick={() => {
+            setShow(false);
+          }}
+        >
+          <Modal.Title>{errMsg}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{errCode}</Modal.Body>
+      </Modal>
     </div>
   );
 };

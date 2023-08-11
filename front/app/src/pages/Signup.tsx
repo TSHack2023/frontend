@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
-import { Button } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import axios from "axios";
 
 const Signup = (): JSX.Element => {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const [show, setShow] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
+  const [errCode, setErrCode] = useState("");
 
   const endpoint = "/signup";
   const baseUrl = process.env.REACT_APP_API_BASE_URL ?? "baseUrl";
@@ -14,19 +17,26 @@ const Signup = (): JSX.Element => {
 
   const signupAPI = (): void => {
     axios
-      .get(apiUrl, {
-        params: {
-          username: name,
-          password: password,
+      .post(apiUrl, {
+        header: {
+          "Access-Control-Allow-Origin": "*",
         },
+        username: name,
+        password: password,
       })
       .then((res) => {
         if (res.data.result === true) {
           sessionStorage.setItem("id", name);
+        } else {
+          setErrMsg("ログインに失敗しました。\n");
+          setErrCode("");
+          setShow(true);
         }
       })
       .catch((err) => {
-        console.log(err.message);
+        setErrMsg("サーバとの通信に失敗しました。\n");
+        setErrCode(err.message);
+        setShow(true);
       });
   };
 
@@ -75,6 +85,23 @@ const Signup = (): JSX.Element => {
           Back
         </Button>
       </Container>
+
+      <Modal
+        show={show}
+        onHide={() => {
+          setShow(false);
+        }}
+      >
+        <Modal.Header
+          closeButton
+          onClick={() => {
+            setShow(false);
+          }}
+        >
+          <Modal.Title>{errMsg}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{errCode}</Modal.Body>
+      </Modal>
     </>
   );
 };

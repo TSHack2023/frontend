@@ -5,6 +5,7 @@ import Button from "react-bootstrap/Button";
 import Header from "../components/header";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { Modal } from "react-bootstrap";
 
 interface EvaluationItem {
   name: string;
@@ -24,6 +25,9 @@ interface Answer {
 
 const HomeDetail = (fileid: number): JSX.Element => {
   const [answerlist, setAnswerlist] = useState<AnswerList[]>([]);
+  const [show, setShow] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
+  const [errCode, setErrCode] = useState("");
   const fileName = "example.txt"; // ファイル名
 
   const endpoint = "/accessanswer";
@@ -47,7 +51,9 @@ const HomeDetail = (fileid: number): JSX.Element => {
         }
       })
       .catch((err) => {
-        console.log(err.message);
+        setErrMsg("サーバとの通信に失敗しました。\n");
+        setErrCode(err.message);
+        setShow(true);
       });
   };
 
@@ -142,8 +148,26 @@ const HomeDetail = (fileid: number): JSX.Element => {
               </ul>
             </ListGroup.Item>
           ))}
+          {answerlistRender}
         </ListGroup>
       </Container>
+
+      <Modal
+        show={show}
+        onHide={() => {
+          setShow(false);
+        }}
+      >
+        <Modal.Header
+          closeButton
+          onClick={() => {
+            setShow(false);
+          }}
+        >
+          <Modal.Title>{errMsg}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{errCode}</Modal.Body>
+      </Modal>
     </div>
   );
 };

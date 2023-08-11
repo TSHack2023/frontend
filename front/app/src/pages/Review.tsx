@@ -6,6 +6,7 @@ import Form from "react-bootstrap/Form";
 import Header from "../components/header";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { Modal } from "react-bootstrap";
 
 interface FileItem {
   file_id: number;
@@ -16,6 +17,9 @@ interface FileItem {
 
 const Review = (): JSX.Element => {
   const [fileList, setFileList] = useState<FileItem[]>([]);
+  const [show, setShow] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
+  const [errCode, setErrCode] = useState("");
 
   const endpoint = "/getfile";
   const baseUrl = process.env.REACT_APP_API_BASE_URL ?? "baseUrl";
@@ -34,7 +38,9 @@ const Review = (): JSX.Element => {
         }
       })
       .catch((err) => {
-        console.log(err.message);
+        setErrMsg("サーバとの通信に失敗しました。\n");
+        setErrCode(err.message);
+        setShow(true);
       });
   };
 
@@ -190,8 +196,26 @@ const Review = (): JSX.Element => {
               </div>
             </ListGroup.Item>
           ))}
+          {fileListRender}
         </ListGroup>
       </Container>
+
+      <Modal
+        show={show}
+        onHide={() => {
+          setShow(false);
+        }}
+      >
+        <Modal.Header
+          closeButton
+          onClick={() => {
+            setShow(false);
+          }}
+        >
+          <Modal.Title>{errMsg}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{errCode}</Modal.Body>
+      </Modal>
     </div>
   );
 };
