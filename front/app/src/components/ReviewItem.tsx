@@ -3,11 +3,6 @@ import { Form } from "react-bootstrap";
 import RangeSlider from "react-bootstrap-range-slider";
 import Container from "react-bootstrap/Container";
 
-interface ScoreItem {
-  eval_id: number;
-  score: number;
-}
-
 interface Props {
   id: number;
   name: string;

@@ -42,7 +42,7 @@ const Contribute = (): JSX.Element => {
             axios
               .post(apiUrl, {
                 username: id,
-                filename: filename,
+                filename,
                 fileurl: res,
                 evallist: evalList,
               })
@@ -105,11 +105,11 @@ const Contribute = (): JSX.Element => {
     explanation: string,
   ): void => {
     const newitem: Items = {
-      id: id,
-      evalname: evalname,
-      evalmin: evalmin,
-      evalmax: evalmax,
-      explanation: explanation,
+      id,
+      evalname,
+      evalmin,
+      evalmax,
+      explanation,
     };
     const newlist = iteminfo.map((item) =>
       item.id === newitem.id ? newitem : item,

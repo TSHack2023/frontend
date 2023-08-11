@@ -20,7 +20,7 @@ const Signin = (): JSX.Element => {
     axios
       .post(apiUrl, {
         username: name,
-        password: password,
+        password,
       })
       .then((res) => {
         if (res.data.result === true) {

@@ -70,7 +70,7 @@ const ReviewDetail = (): JSX.Element => {
         .post(postApiUrl, {
           username: id,
           file_id: Number(urlParams.fileid),
-          scorelist: scorelist,
+          scorelist,
         })
         .then((res) => {
           if (res.data.result === true) {
@@ -93,7 +93,7 @@ const ReviewDetail = (): JSX.Element => {
   };
 
   const changeScoreList = (evalId: number, score: number): void => {
-    const newScore: ScoreItem = { eval_id: evalId, score: score };
+    const newScore: ScoreItem = { eval_id: evalId, score };
     const newList = scorelist.map((item) =>
       item.eval_id === newScore.eval_id ? newScore : item,
     );

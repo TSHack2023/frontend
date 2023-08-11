@@ -74,7 +74,7 @@ const HomeDetail = (): JSX.Element => {
       return scoreItem.score;
     });
 
-    return { name: name, evaluations: evaluations };
+    return { name, evaluations };
   });
 
   // CSV 形式に変換

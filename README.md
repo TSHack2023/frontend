@@ -97,12 +97,9 @@
 4. 「src/index.tsx」に　`import "bootstrap/dist/css/bootstrap.min.css";`　を追加
 5. 必要なコンポーネントをインポート（例：`import Button from "react-bootstrap/Button";`）
 
-## react-router-domの導入
-1. `docker exec -it node /bin/bash`
-2. `cd app`
-3. `npm install react-router-dom@5 @types/react-router-dom`
-
-## axiosの導入
-1. `docker exec -it node /bin/bash`
-2. `cd app`
-3. `npm install axios`
+## npm install
+- `npm install autoprefixer@10.4.5 --save-exact`
+- `npm install react-bootstrap-range-slider`
+- `npm install @azure/storage-blob`
+- `npm install axios`
+- `npm install react-router-dom@5 @types/react-router-dom`
