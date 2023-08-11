@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
-import { Button, Modal } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import axios from "axios";
 import ErrorPop from "../components/errorPop";
 
@@ -25,6 +25,9 @@ const Signup = (): JSX.Element => {
       .then((res) => {
         if (res.data.result === true) {
           sessionStorage.setItem("id", name);
+          setErrMsg("ログインに成功しました。\n");
+          setErrCode("");
+          setShow(true);
         } else {
           setErrMsg("ログインに失敗しました。\n");
           setErrCode("");
@@ -89,6 +92,7 @@ const Signup = (): JSX.Element => {
         errMsg={errMsg}
         errCode={errCode}
         setShow={setShow}
+        redirectURL="/Signup"
       />
     </>
   );

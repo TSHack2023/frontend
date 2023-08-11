@@ -5,7 +5,6 @@ import Button from "react-bootstrap/Button";
 import Header from "../components/header";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
-import { Modal } from "react-bootstrap";
 import ErrorPop from "../components/errorPop";
 
 interface EvaluationItem {
@@ -26,12 +25,12 @@ interface Answer {
 
 const HomeDetail = (): JSX.Element => {
   const [answerlist, setAnswerlist] = useState<AnswerList[]>([]);
+  const [filename, setFilename] = useState<string>("");
   const [show, setShow] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const [errCode, setErrCode] = useState("");
 
-  const urlParams = useParams<{ fileid: string }>();
-  const fileName = "example.txt"; // ファイル名
+  const urlParams = useParams<{ fileinfo: string }>();
   const endpoint = "/accessanswer";
   const baseUrl = process.env.REACT_APP_API_BASE_URL ?? "baseUrl";
   const apiUrl = baseUrl + endpoint;
@@ -41,37 +40,42 @@ const HomeDetail = (): JSX.Element => {
   }, []);
 
   const accessanswerAPI = (): void => {
-    axios
-      .post(apiUrl, {
-        file_id: Number(urlParams.fileid),
-      })
-      .then((res) => {
-        if (res.data.result === true) {
-          setAnswerlist(res.data.answerlist);
-        }
-      })
-      .catch((err) => {
-        setErrMsg("サーバとの通信に失敗しました。\n");
-        setErrCode(err.message);
-        setShow(true);
-      });
+    if (urlParams.fileinfo !== undefined) {
+      const fileid = urlParams.fileinfo.split("+")[0];
+      const filename = urlParams.fileinfo.split("+")[1];
+
+      axios
+        .post(apiUrl, {
+          file_id: Number(fileid),
+        })
+        .then((res) => {
+          if (res.data.result === true) {
+            setFilename(filename);
+            setAnswerlist(res.data.answerlist);
+          }
+        })
+        .catch((err) => {
+          setErrMsg("サーバとの通信に失敗しました。\n");
+          setErrCode(err.message);
+          setShow(true);
+        });
+    }
   };
 
-  const labels = ["評価項目1", "評価項目2", "評価項目3"]; // ラベルを定義
-  const evaluationItems: EvaluationItem[] = [
-    {
-      name: "Alice",
-      evaluations: [7, 9, 5],
-    },
-    {
-      name: "Bob",
-      evaluations: [8, 6, 4],
-    },
-    {
-      name: "Charlie",
-      evaluations: [9, 7, 8],
-    },
-  ];
+  const labels =
+    answerlist.length > 0
+      ? answerlist[0].scorelist.map((item) => {
+          return item.evalname;
+        })
+      : [""]; // ラベルを定義
+  const evaluationItems: EvaluationItem[] = answerlist.map((item) => {
+    const name = item.username;
+    const evaluations = item.scorelist.map((scoreItem) => {
+      return scoreItem.score;
+    });
+
+    return { name: name, evaluations: evaluations };
+  });
 
   // CSV 形式に変換
   const convertToCSV = (data: EvaluationItem[]): string => {
@@ -88,7 +92,7 @@ const HomeDetail = (): JSX.Element => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "evaluation_items.csv";
+    a.download = filename + "_evaluations.csv";
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -131,7 +135,7 @@ const HomeDetail = (): JSX.Element => {
               margin: "0 auto",
             }}
           >
-            ファイル名: {fileName}
+            ファイル名: {filename}
           </h4>
           <div style={{ width: "100px" }}></div>
         </div>

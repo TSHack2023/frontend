@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
-import { Button, Modal } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import axios from "axios";
 import ErrorPop from "../components/errorPop";
 
@@ -25,7 +25,7 @@ const Signin = (): JSX.Element => {
       .then((res) => {
         if (res.data.result === true) {
           sessionStorage.setItem("id", name);
-          setErrMsg("ログインに失敗しました。\n");
+          setErrMsg("ログインに成功しました。\n");
           setErrCode("");
           setShow(true);
         } else {
@@ -92,6 +92,7 @@ const Signin = (): JSX.Element => {
         errMsg={errMsg}
         errCode={errCode}
         setShow={setShow}
+        redirectURL="/Signin"
       />
     </>
   );

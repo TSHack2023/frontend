@@ -22,31 +22,40 @@ const Home = (): JSX.Element => {
   const [errMsg, setErrMsg] = useState("");
   const [errCode, setErrCode] = useState("");
 
-  const endpoint = "/searchfile";
+  const endpoint = "/getfile";
   const baseUrl = process.env.REACT_APP_API_BASE_URL ?? "baseUrl";
   const apiUrl = baseUrl + endpoint;
 
   useEffect(() => {
-    searchfileAPI();
+    setName();
+    getfileAPI();
   }, []);
 
-  const searchfileAPI = (): void => {
+  const getfileAPI = (): void => {
+    axios
+      .get(apiUrl)
+      .then((res) => {
+        setFilteredList(res.data);
+      })
+      .catch((err) => {
+        setErrMsg("サーバとの通信に失敗しました。\n");
+        setErrCode(err.message);
+        setShow(true);
+      });
+  };
+
+  const setName = (): void => {
+    const id = sessionStorage.getItem("id");
+    if (id !== null) setUsername(id);
+  };
+
+  const setFilteredList = (data: Item[]): void => {
     const id = sessionStorage.getItem("id");
     if (id !== null) {
-      setUsername(id);
-      axios
-        .post(apiUrl, {
-          username: username,
-        })
-        .then((res) => {
-          console.log(res);
-          setFileList(res.data);
-        })
-        .catch((err) => {
-          setErrMsg("サーバとの通信に失敗しました。\n");
-          setErrCode(err.message);
-          setShow(true);
-        });
+      const newList = data.filter((item) => {
+        return item.username === id;
+      });
+      setFileList(newList);
     }
   };
 
@@ -55,7 +64,7 @@ const Home = (): JSX.Element => {
       return (
         <ListGroup>
           {fileList.map((item) => {
-            const link = "/home/" + item.id.toString();
+            const link = "/home/" + item.id.toString() + "+" + item.filename;
             return (
               <ListGroup.Item key={item.id}>
                 <div className="d-flex justify-content-between align-items-center">

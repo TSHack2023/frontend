@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Container from "react-bootstrap/Container";
 import Header from "../components/header";
-import { Button, Modal } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import ReviewItem from "../components/ReviewItem";
 import axios from "axios";
 import { useParams } from "react-router-dom";
@@ -61,30 +61,6 @@ const ReviewDetail = (): JSX.Element => {
         setErrCode(err.message);
         setShow(true);
       });
-  };
-
-  const testAPI = (): void => {
-    const testFilename = "file name";
-    const testFileurl = "https://example";
-    const testEval1: Eval = {
-      eval_id: Number(urlParams.fileid),
-      evalname: "name",
-      evalmin: 0,
-      evalmax: 2,
-      explanation: "discription",
-    };
-    const testEval2: Eval = {
-      eval_id: 2,
-      evalname: "name2",
-      evalmin: 0,
-      evalmax: 10,
-      explanation: "discription",
-    };
-    const testEvallist: Eval[] = [testEval1, testEval2];
-    setFilename(testFilename);
-    setFileurl(testFileurl);
-    setEvallist(testEvallist);
-    initScoreList();
   };
 
   const answerAPI = (): void => {

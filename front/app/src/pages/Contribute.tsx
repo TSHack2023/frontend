@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Container from "react-bootstrap/Container";
 import Header from "../components/header";
-import { Button, Col, Form, Modal, Row } from "react-bootstrap";
+import { Button, Col, Form, Row } from "react-bootstrap";
 import EvalItem from "../components/EvalItem";
 import uploadFile2AzureStorage from "../components/azureStorage";
 import type { Items } from "../components/EvalItem";
@@ -11,7 +11,6 @@ const Contribute = (): JSX.Element => {
   const [filename, setFilename] = useState<string>("");
   const [iteminfo, setIteminfo] = useState<Items[]>([]);
   const [file, setFile] = useState<File>();
-  const [url, setUrl] = useState<string>("");
   const [list, setList] = useState<number[]>([]); // EvalItemコンポーネントに付与するIDを格納するための配列
   const [show, setShow] = useState(false);
   const [errMsg, setErrMsg] = useState("");
