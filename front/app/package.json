@@ -13,7 +13,7 @@
     "@types/react-dom": "^18.2.7",
     "autoprefixer": "^10.4.4",
     "axios": "^1.4.0",
-    "bootstrap": "^4.6.0",
+    "bootstrap": "^5.2.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.8.0",
     "react-bootstrap-range-slider": "^3.0.8",
@@ -31,7 +31,7 @@
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore . --fix",
     "rm": "rm -rf docs",
     "mv": "mv build docs",
-    "git": "git add . && git commit && git push origin master",
+    "git": "git add . && git commit -m 'build' && git push origin master",
     "deploy": "npm run rm && npm run build && npm run mv && npm run git"
   },
   "eslintConfig": {
@@ -68,5 +68,5 @@
     "pretty-quick": "^3.1.3",
     "typescript": "^4.9.5"
   },
-  "homepage": "https://TSHack2023.github.io/frontend/"
+  "homepage": "https://TSHack2023.github.io/front-deploy/"
 }
