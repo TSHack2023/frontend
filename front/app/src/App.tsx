@@ -39,6 +39,9 @@ const App = (): JSX.Element => {
           <Route path="/">
             <Redirect to="/Home" />
           </Route>
+          <Route path="*">
+            <Redirect to="/" />
+          </Route>
         </Switch>
       </BrowserRouter>
     );
@@ -69,6 +72,9 @@ const App = (): JSX.Element => {
           </Route>
           <Route path="/">
             <Redirect to="/Signin" />
+          </Route>
+          <Route path="*">
+            <Redirect to="/" />
           </Route>
         </Switch>
       </BrowserRouter>
