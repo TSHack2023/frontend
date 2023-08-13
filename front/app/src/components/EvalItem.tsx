@@ -4,10 +4,16 @@ import { Button, Col, Form, Row } from "react-bootstrap";
 interface Props {
   id: number;
   deleteItem: (id: number) => void;
-  changeIteminfo: (id: number, evalname: string, evalmin: number, evalmax: number, explanation: string) => void;
+  changeIteminfo: (
+    id: number,
+    evalname: string,
+    evalmin: number,
+    evalmax: number,
+    explanation: string,
+  ) => void;
 }
 
-export type Items = {
+export interface Items {
   id: number;
   evalname: string;
   evalmin: number;
@@ -16,9 +22,13 @@ export type Items = {
 }
 
 const EvalItem = (props: Props): JSX.Element => {
-  const [item, setItem] = useState<Items>(
-    {id: props.id, evalname: "", evalmax: 0, evalmin: 0, explanation: ""}
-  );
+  const [item, setItem] = useState<Items>({
+    id: props.id,
+    evalname: "",
+    evalmax: 0,
+    evalmin: 0,
+    explanation: "",
+  });
 
   return (
     <>
@@ -32,8 +42,14 @@ const EvalItem = (props: Props): JSX.Element => {
               type="text"
               value={item.evalname}
               onChange={(e) => {
-                setItem({...item, evalname: e.target.value})
-                props.changeIteminfo(item.id, item.evalname, item.evalmin, item.evalmax, item.explanation);
+                setItem({ ...item, evalname: e.target.value });
+                props.changeIteminfo(
+                  item.id,
+                  item.evalname,
+                  item.evalmin,
+                  item.evalmax,
+                  item.explanation,
+                );
               }}
             />
           </Col>
@@ -46,8 +62,14 @@ const EvalItem = (props: Props): JSX.Element => {
               type="number"
               value={item.evalmax}
               onChange={(e) => {
-                setItem({...item, evalmax: Number(e.target.value)});
-                props.changeIteminfo(item.id, item.evalname, item.evalmin, item.evalmax, item.explanation);
+                setItem({ ...item, evalmax: Number(e.target.value) });
+                props.changeIteminfo(
+                  item.id,
+                  item.evalname,
+                  item.evalmin,
+                  item.evalmax,
+                  item.explanation,
+                );
               }}
             />
           </Col>
@@ -60,8 +82,14 @@ const EvalItem = (props: Props): JSX.Element => {
               type="number"
               value={item.evalmin}
               onChange={(e) => {
-                setItem({...item, evalmin: Number(e.target.value)});
-                props.changeIteminfo(item.id, item.evalname, item.evalmin, item.evalmax, item.explanation);
+                setItem({ ...item, evalmin: Number(e.target.value) });
+                props.changeIteminfo(
+                  item.id,
+                  item.evalname,
+                  item.evalmin,
+                  item.evalmax,
+                  item.explanation,
+                );
               }}
             />
           </Col>
@@ -76,8 +104,14 @@ const EvalItem = (props: Props): JSX.Element => {
               type="text"
               value={item.explanation}
               onChange={(e) => {
-                setItem({...item, explanation: e.target.value});
-                props.changeIteminfo(item.id, item.evalname, item.evalmin, item.evalmax, item.explanation);
+                setItem({ ...item, explanation: e.target.value });
+                props.changeIteminfo(
+                  item.id,
+                  item.evalname,
+                  item.evalmin,
+                  item.evalmax,
+                  item.explanation,
+                );
               }}
             />
           </Col>
