@@ -5,7 +5,7 @@ const sasToken =
   process.env.REACT_APP_AZURE_SHARED_ACCESS_SIGNATURE ?? "sasToken";
 
 const blobServiceClient = new BlobServiceClient(
-  `https://${account}.blob.core.windows.net${sasToken}`,
+  `https://${account}.blob.core.windows.net/${sasToken}`,
 );
 
 const containerName = process.env.REACT_APP_AZURE_CONTAINER_NAME ?? "container";

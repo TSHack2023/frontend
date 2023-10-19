@@ -40,8 +40,12 @@ const ReviewDetail = (): JSX.Element => {
 
   useEffect(() => {
     // testAPI();
-    filereviewAPI();
-  }, []);
+    if (evallist.length === 0) {
+      filereviewAPI();
+    } else {
+      initScoreList();
+    }
+  }, [evallist]);
 
   const filereviewAPI = (): void => {
     axios
@@ -53,7 +57,6 @@ const ReviewDetail = (): JSX.Element => {
           setFilename(res.data.filename);
           setFileurl(res.data.fileurl);
           setEvallist(res.data.evallist);
-          initScoreList();
         }
       })
       .catch((err) => {
